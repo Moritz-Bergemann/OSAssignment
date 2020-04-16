@@ -5,7 +5,7 @@
 #define MIN_REQUESTS 50
 #define MAX_REQUESTS 100
 #define MAX_SERVICE_LENGTH  100
-#define REQUEST_FILE_NAME "sim_input"
+#define REQUEST_FILE_NAME "sim_input.txt"
 #define NUM_FLOORS = 20;
 
 //Structs//
@@ -23,18 +23,25 @@ typedef struct {
     int used; //Number of requests currently in buffer
 } RequestBuffer;
 
-//Information for the request process
+//Information for the request thread
 typedef struct {
     FILE* reqFile; //File containing lift requests
     RequestBuffer* buffer; //Lift request buffer
-} LiftRequestProcessInfo;
+} LiftRequestThreadInfo;
 
 //Information for the lift process
 typedef struct {
-    int liftNumber; //Identifying number of this lift (probably 1-3)
+    int liftNum; //Identifying number of this lift (probably 1-3)
     RequestBuffer* buffer; //Lift request buffer
-} LiftProcessInfo;
+} LiftThreadInfo;
 
 //Function headers//
 int main(int argc, char** argv);
+void printHelp();
+void manageThreads(int bufferSize, int serviceLength);
+RequestBuffer* createRequestBuffer(int size);
+LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile);
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum);
+FILE* checkFile(char* path);
+void fatalError(char* message);
 #endif

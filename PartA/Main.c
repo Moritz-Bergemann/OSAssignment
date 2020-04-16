@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include "Main.h"
+#include "LiftR.h"
+#include "Lift.h"
 
 /** Takes in & validates command line parameters
  */
@@ -43,7 +45,6 @@ int main(int argc, char** argv)
     }
     else
     {
-        printf("Incorrect number of command line arguments (2 required)!\n");
         printHelp();
     }
 }
@@ -53,7 +54,7 @@ int main(int argc, char** argv)
 void printHelp()
 {
     printf("Lift simulation A by Moritz Bergemann:\n");
-    printf("Run in format \"lift_sim_A m t\"");
+    printf("Run in format \"lift_sim_A m t\"\n");
     printf("\t m: Buffer size (must be between 1 & %d)\n", MAX_REQUESTS);
     printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
 }
@@ -65,35 +66,98 @@ void manageThreads(int bufferSize, int serviceLength)
     //Validating request file exists & contains correct number of requests
     FILE* reqFile = checkFile(REQUEST_FILE_NAME);
 
-    //Creating request buffer
-    int* reqBuffer = (int*)malloc(sizeof(int) * bufferSize);
+    //Creating and initialising request buffer
+    RequestBuffer* reqBuffer;
+    reqBuffer = createRequestBuffer(bufferSize);
 
     //Setting up information for request process
-    LiftRequestProcessInfo* reqThreadInfo;
-    reqThreadInfo = makeReqThreadInfo(bufferSize, reqBuffer, reqFile);
+    LiftRequestThreadInfo* reqInfo;
+    reqInfo = createReqThreadInfo(reqBuffer, reqFile);
 
     //Setting up information for 3 lift processes
+    LiftThreadInfo* liftInfo1, *liftInfo2, *liftInfo3;
+    liftInfo1 = createLiftThreadInfo(reqBuffer, 1);
+    liftInfo2 = createLiftThreadInfo(reqBuffer, 2);
+    liftInfo3 = createLiftThreadInfo(reqBuffer, 3);
 
-    pthread_t liftR;
-    int success;
+    //Creating threads
+    pthread_t liftR, lift1, lift2, lift3;
+    int success = 0;
 
-    success = pthread_create(&liftR, NULL, request(), (void*)reqFile);
+    success += pthread_create(&liftR, NULL, request, (void*)reqInfo);
+    success += pthread_create(&lift1, NULL, lift, (void*)liftInfo1);
+    success += pthread_create(&lift2, NULL, lift, (void*)liftInfo2);
+    success += pthread_create(&lift3, NULL, lift, (void*)liftInfo3);
+    
+    if (success != 4)
+    {
+        fatalError("Failed to create all threads");
+    }
 }
 
-LiftRequestProcessInfo* makeReqThreadInfo(int bufferSize, int* buffer, FILE* reqFile)
+/** Creates and initialises request buffer to default values
+ */
+RequestBuffer* createRequestBuffer(int size) {
+    RequestBuffer* buffer;
+    buffer = (RequestBuffer*)malloc(sizeof(RequestBuffer));
+    
+    buffer->reqArray = (Request*)malloc(sizeof(Request*) * size);
+    buffer->size = size;
+    buffer->used = 0;
+
+    return buffer;
+}
+
+/** Creates and initialises LiftRequestThreadInfo struct
+ */
+LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
 {
-    LiftRequestProcessInfo* info;
-
     //Creating request info on heap
-    info = (LiftRequestProcessInfo*)malloc(sizeof(LiftRequestProcessInfo));
+    LiftRequestThreadInfo* info;
+    info = (LiftRequestThreadInfo*)malloc(sizeof(LiftRequestThreadInfo));
 
-    //Allocating struct values
-    info->bufferSize = bufferSize;
+    //Initialising struct values
     info->buffer = buffer;
-    info->reqFile = reqFile;
+    info-> reqFile = reqFile;
+
+    return info;
 }
 
+/** Creates and initialises LiftThreadInfo struct
+ */
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
+{
+    //Creating request info on heap
+    LiftThreadInfo* info;
+    info = (LiftThreadInfo*)malloc(sizeof(LiftThreadInfo));
+
+    //Initialising struct values
+    info->buffer = buffer;
+    info->liftNum = liftNum;
+
+    return info;
+}
 
 /** Checks imported filename points to a valid file with the correct number of requests
  *  (though it does not check whether these requests are valid)
  */
+FILE* checkFile(char* path)
+{
+    FILE* file;
+
+    file = fopen(path, "r'");
+
+    if (file == NULL)
+    {
+        fatalError("Failed to open requests file");;
+    }
+
+    return file;
+}
+
+void fatalError(char* message)
+{
+    printf("Fatal Error: %s\n", message);
+    printf("Exiting...");
+    exit(1); //Exit with error code 1
+}

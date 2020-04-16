@@ -1,25 +1,19 @@
 CC = gcc
-CFLAGS = -Wall -Werror -ansi -pedantic -std=c89 -lpthread
-OBJ = 
+CFLAGS = -Wall -Werror -pedantic -lpthread
+OBJ = Main.o Lift.o LiftR.o
 EXEC = lift_sim_A
-
 
 $(EXEC): $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) $(CFLAGS)
 
-Main.o: Main.c Main.h
+Main.o: Main.c Main.h LiftR.h Lift.h
+	$(CC) -c Main.c $(CFLAGS)
 
-MainMenu.o: MainMenu.c MainMenu.h LinkedList.h FileManager.h GameManager.h
-	$(CC) -c MainMenu.c $(CFLAGS)
+Lift.o: Lift.c Lift.h Main.h
+	$(CC) -c Lift.c $(CFLAGS)
 
-GameManager.o: GameManager.c LinkedList.h MainMenu.h FileManager.h GameManager.h
-	$(CC) -c GameManager.c $(CFLAGS)
-
-FileManager.o: FileManager.c LinkedList.h MainMenu.h GameManager.h FileManager.h
-	$(CC) -c FileManager.c $(CFLAGS)
-
-LinkedList.o: LinkedList.c LinkedList.h
-	$(CC) -c LinkedList.c $(CFLAGS)
+LiftR.o: LiftR.c LiftR.h Main.h
+	$(CC) -c LiftR.c $(CFLAGS)
 
 clean:
 	rm -f $(EXEC) $(OBJ)

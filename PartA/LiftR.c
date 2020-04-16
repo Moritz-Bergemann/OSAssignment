@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
-
-/**Lift-R by Moritz Bergemann
+/**LiftR by Moritz Bergemann
  * File containing functionality for reading lift requests from the imported file writing these to the request buffer.
  */
 
-void request(FILE* file)
+void *request(void* liftReqInfoVoid)
 {
-    printf("Hi, I'm the elevator request handler");
+    printf("Hi, I'm the elevator request handler\n");
+
+    pthread_exit(NULL);
 }
 
