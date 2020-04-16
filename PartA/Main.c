@@ -1,11 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include "Main.h"
-
-const int MIN_REQUESTS = 50;
-const int MAX_REQUESTS = 100;
-const int MAX_SERVICE_LENGTH = 100;
-const char* REQUEST_FILE_NAME = "sim_input";
 
 /** Takes in & validates command line parameters
  */
@@ -25,7 +21,7 @@ int main(int argc, char** argv)
                 if (serviceLength >= 0 && serviceLength <= MAX_SERVICE_LENGTH) //Validating service length range
                 {
                     //All settings valid, begin running program
-                    initThreads(bufferSize, serviceLength);
+                    manageThreads(bufferSize, serviceLength);
                 }
                 else
                 {
@@ -64,10 +60,40 @@ void printHelp()
 
 /** Initiates threads TODO more info here
  */
-void initThreads(int bufferSize, int serviceLength)
+void manageThreads(int bufferSize, int serviceLength)
 {
     //Validating request file exists & contains correct number of requests
     FILE* reqFile = checkFile(REQUEST_FILE_NAME);
 
-    
+    //Creating request buffer
+    int* reqBuffer = (int*)malloc(sizeof(int) * bufferSize);
+
+    //Setting up information for request process
+    LiftRequestProcessInfo* reqThreadInfo;
+    reqThreadInfo = makeReqThreadInfo(bufferSize, reqBuffer, reqFile);
+
+    //Setting up information for 3 lift processes
+
+    pthread_t liftR;
+    int success;
+
+    success = pthread_create(&liftR, NULL, request(), (void*)reqFile);
 }
+
+LiftRequestProcessInfo* makeReqThreadInfo(int bufferSize, int* buffer, FILE* reqFile)
+{
+    LiftRequestProcessInfo* info;
+
+    //Creating request info on heap
+    info = (LiftRequestProcessInfo*)malloc(sizeof(LiftRequestProcessInfo));
+
+    //Allocating struct values
+    info->bufferSize = bufferSize;
+    info->buffer = buffer;
+    info->reqFile = reqFile;
+}
+
+
+/** Checks imported filename points to a valid file with the correct number of requests
+ *  (though it does not check whether these requests are valid)
+ */
