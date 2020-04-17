@@ -26,7 +26,7 @@ void *lift(void* infoVoid)
 
 /** Creates and initialises LiftThreadInfo struct
  */
-LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int* doneTracker)
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
 {
     //Creating request info on heap
     LiftThreadInfo* info;
@@ -36,7 +36,6 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int* do
     info->buffer = buffer;
     info->liftNum = liftNum;
     info->totalMovement = 0;
-    info->done = doneTracker;
 
     return info;
 }

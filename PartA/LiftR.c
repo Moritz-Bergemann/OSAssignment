@@ -90,11 +90,16 @@ Request* getRequest(FILE* file)
 /** Continually checks buffer until it is empty and then marks 'done' flag as true
  *  (indicating that all requests have been fulfilled)
  */
-
+void markDone(int* done, RequestBuffer* buffer)
+{
+    pthread_mutex_lock(buffer->mutex); //Locking buffer
+    
+    pthread_mutex_unlock(buffer->mutex); //Unlocking buffer
+}
 
 /** Creates and initialises LiftRequestThreadInfo struct
  */
-LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile, int* doneTracker)
+LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
 {
     //Creating request info on heap
     LiftRequestThreadInfo* info;
@@ -103,7 +108,6 @@ LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile,
     //Initialising struct values
     info->buffer = buffer;
     info->file = reqFile;
-    info ->done = doneTracker;
 
     return info;
 }

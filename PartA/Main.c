@@ -72,18 +72,15 @@ void manageThreads(int bufferSize, int serviceLength)
     RequestBuffer* reqBuffer;
     reqBuffer = createRequestBuffer(bufferSize);
 
-    //Creating and initialising done tracker (tracks whether all valid requests have been read)
-    int* doneTracker = (int*)malloc(sizeof(int));
-
     //Setting up information for request process
     LiftRequestThreadInfo* reqInfo;
-    reqInfo = createReqThreadInfo(reqBuffer, reqFile, doneTracker);
+    reqInfo = createReqThreadInfo(reqBuffer, reqFile);
 
     //Setting up information for 3 lift processes
     LiftThreadInfo* liftInfo1, *liftInfo2, *liftInfo3;
-    liftInfo1 = createLiftThreadInfo(reqBuffer, 1, doneTracker);
-    liftInfo2 = createLiftThreadInfo(reqBuffer, 2, doneTracker);
-    liftInfo3 = createLiftThreadInfo(reqBuffer, 3, doneTracker);
+    liftInfo1 = createLiftThreadInfo(reqBuffer, 1);
+    liftInfo2 = createLiftThreadInfo(reqBuffer, 2);
+    liftInfo3 = createLiftThreadInfo(reqBuffer, 3);
 
     //Creating threads
     pthread_t liftR, lift1, lift2, lift3;
@@ -106,7 +103,6 @@ void manageThreads(int bufferSize, int serviceLength)
     //Performing cleanup TODO
     fclose(reqFile); //Closing requests file
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
-    free(doneTracker);
 
     //Freeing thread info structs
     free(reqInfo);

@@ -32,6 +32,6 @@ typedef struct {
 
 //Function headers//
 void *lift(void* liftInfoVoid);
-LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int* doneTracker);
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum);
 
 #endif

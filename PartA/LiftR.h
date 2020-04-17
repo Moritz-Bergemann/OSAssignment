@@ -15,6 +15,6 @@ typedef struct {
 //Function headers//
 void * request(void* liftReqInfoVoid);
 Request* getRequest(FILE* file);
-LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile, int* doneTracker);
+LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile);
 
 #endif
