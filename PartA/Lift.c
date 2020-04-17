@@ -6,20 +6,27 @@
 #include <pthread.h>
 
 
-void *lift(void* liftInfoVoid)
+void *lift(void* infoVoid)
 {
-    //Getting lift information from lift
-    LiftThreadInfo* liftInfo;
-    liftInfo = (LiftThreadInfo*)liftInfoVoid;
+    // printf("Hi, I'm lift process number %d\n", liftInfo->liftNum); //DEBUG
 
-    printf("Hi, I'm lift process number %d\n", liftInfo->liftNum);
+    //Getting lift information from lift
+    LiftThreadInfo* info;
+    info = (LiftThreadInfo*)infoVoid;
+
+    //Attempt to read requests while all requests from file have not been completed
+    while (!info->done)
+    {
+        
+    }
+    
 
     pthread_exit(NULL);
 }
 
 /** Creates and initialises LiftThreadInfo struct
  */
-LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int* doneTracker)
 {
     //Creating request info on heap
     LiftThreadInfo* info;
@@ -28,6 +35,8 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
     //Initialising struct values
     info->buffer = buffer;
     info->liftNum = liftNum;
+    info->totalMovement = 0;
+    info->done = doneTracker;
 
     return info;
 }
