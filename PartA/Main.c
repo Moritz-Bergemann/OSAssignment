@@ -1,9 +1,11 @@
+#include "Main.h"
+#include "Request.h"
+#include "LiftR.h"
+#include "Lift.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include "Main.h"
-#include "LiftR.h"
-#include "Lift.h"
+
 
 /** Takes in & validates command line parameters
  */
@@ -89,53 +91,24 @@ void manageThreads(int bufferSize, int serviceLength)
     success += pthread_create(&lift2, NULL, lift, (void*)liftInfo2);
     success += pthread_create(&lift3, NULL, lift, (void*)liftInfo3);
     
-    if (success != 4)
+    if (success == 0) //If all threads created successfully
     {
-        fatalError("Failed to create all threads");
+
     }
-}
+    else
+    {
+        printf("Fatal error - failed to create all threads");
+    }
 
-/** Creates and initialises request buffer to default values
- */
-RequestBuffer* createRequestBuffer(int size) {
-    RequestBuffer* buffer;
-    buffer = (RequestBuffer*)malloc(sizeof(RequestBuffer));
+    //Performing cleanup TODO
+    fclose(reqFile); //Closing requests file
+    freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
     
-    buffer->reqArray = (Request*)malloc(sizeof(Request*) * size);
-    buffer->size = size;
-    buffer->used = 0;
-
-    return buffer;
-}
-
-/** Creates and initialises LiftRequestThreadInfo struct
- */
-LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
-{
-    //Creating request info on heap
-    LiftRequestThreadInfo* info;
-    info = (LiftRequestThreadInfo*)malloc(sizeof(LiftRequestThreadInfo));
-
-    //Initialising struct values
-    info->buffer = buffer;
-    info-> reqFile = reqFile;
-
-    return info;
-}
-
-/** Creates and initialises LiftThreadInfo struct
- */
-LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
-{
-    //Creating request info on heap
-    LiftThreadInfo* info;
-    info = (LiftThreadInfo*)malloc(sizeof(LiftThreadInfo));
-
-    //Initialising struct values
-    info->buffer = buffer;
-    info->liftNum = liftNum;
-
-    return info;
+    //Freeing thread info structs
+    free(reqInfo);
+    free(liftInfo1);
+    free(liftInfo2);
+    free(liftInfo3);
 }
 
 /** Checks imported filename points to a valid file with the correct number of requests
@@ -155,6 +128,7 @@ FILE* checkFile(char* path)
     return file;
 }
 
+//TODO refactor so this isn't needed, it really doesn't work when you need cleanup and thread safety
 void fatalError(char* message)
 {
     printf("Fatal Error: %s\n", message);
