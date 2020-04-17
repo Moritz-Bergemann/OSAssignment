@@ -38,7 +38,7 @@ void *request(void* infoVoid)
     }
 
     //Marking all requests as complete once buffer is empty
-    markDone(info->done, info->buffer);
+    markDone(info->buffer);
 
     printf("LiftR: All requests read from file!"); //DEBUG
     printf("LiftR: Exiting..."); //DEBUG
@@ -87,16 +87,6 @@ Request* getRequest(FILE* file)
     return newRequest;
 }
 
-/** Continually checks buffer until it is empty and then marks 'done' flag as true
- *  (indicating that all requests have been fulfilled)
- */
-void markDone(int* done, RequestBuffer* buffer)
-{
-    pthread_mutex_lock(buffer->mutex); //Locking buffer
-    
-    pthread_mutex_unlock(buffer->mutex); //Unlocking buffer
-}
-
 /** Creates and initialises LiftRequestThreadInfo struct
  */
 LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
@@ -111,3 +101,5 @@ LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
 
     return info;
 }
+
+//TODO logRequestReceived

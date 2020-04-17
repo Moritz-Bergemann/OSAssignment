@@ -14,10 +14,29 @@ void *lift(void* infoVoid)
     LiftThreadInfo* info;
     info = (LiftThreadInfo*)infoVoid;
 
+    Request* curRequest; //Current request being worked on
+    LiftOperation* curOperation;
+
     //Attempt to read requests while all requests from file have not been completed
     while (!info->done)
     {
-        
+        curRequest = getRequestFromBuffer(info->buffer);
+
+        if (curRequest != NULL) //If getting request did not time out
+        {
+            curOperation = performOperation(curRequest);
+            
+            info->totalMovement += curOperation->movement;
+
+            logOperation(curOperation);
+
+            //Freeing components of current operation (including its associated request)
+            freeOperation(curOperation);
+        }
+        else
+        {
+            printf("Lift-%d: Request retrieval timed out\n"); //DEBUG
+        }
     }
     
 
@@ -39,3 +58,22 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
 
     return info;
 }
+
+/** Frees the components of the imported LiftOperation AND its associated request
+ */
+void freeOperation(LiftOperation* op)
+{
+    free(op->op1);
+    if (op->op2 != NULL) //If second operation exists
+    {
+        free(op->op2);
+    }
+
+    free(op->request);
+
+    free(op);
+}
+
+//TODO performOperation
+
+//TODO logOperation

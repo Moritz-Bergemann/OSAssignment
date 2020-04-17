@@ -16,7 +16,7 @@ typedef struct {
 typedef struct {
     int startFloor;
     int endFloor;
-} Operation;
+} LiftMovement;
 
 typedef struct {
     int operationNum; //Number of operation for this lift
@@ -26,8 +26,8 @@ typedef struct {
     Request* request; //Request being fulfilled
 
     //Lift has at most 2 operations (only 1 if already on request floor) 2nd should be NULL if not performed
-    Operation* op1;
-    Operation* op2;
+    LiftMovement* op1;
+    LiftMovement* op2;
 } LiftOperation;
 
 //Function headers//
