@@ -7,12 +7,13 @@
 //Structs//
 //Information for the request thread
 typedef struct {
-    FILE* reqFile; //File containing lift requests
+    FILE* file; //File containing lift requests
     RequestBuffer* buffer; //Lift request buffer
 } LiftRequestThreadInfo;
 
 //Function headers//
 void * request(void* liftReqInfoVoid);
+Request* getRequest(FILE* file);
 LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile);
 
 #endif

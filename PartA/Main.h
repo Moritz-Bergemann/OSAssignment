@@ -8,7 +8,7 @@
 #define MAX_REQUESTS 100
 #define MAX_SERVICE_LENGTH  100
 #define REQUEST_FILE_NAME "sim_input.txt"
-#define NUM_FLOORS = 20;
+#define NUM_FLOORS 20
 
 
 //Function headers//
