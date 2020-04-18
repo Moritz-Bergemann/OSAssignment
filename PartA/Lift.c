@@ -18,7 +18,7 @@ void *lift(void* infoVoid)
     LiftOperation* curOperation;
 
     //Attempt to read requests while all requests from file have not been completed
-    while (!info->done)
+    while (!info->buffer->done) //If timeout occurs, this check will continue to be performed FIXME DOES THIS NEED TO GET A LOCK ON BUFFER
     {
         curRequest = getRequestFromBuffer(info->buffer);
 

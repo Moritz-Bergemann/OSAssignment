@@ -9,7 +9,6 @@ typedef struct {
     int liftNum; //Identifying number of this lift (probably 1-3)
     int totalMovement; //Total movement (number of floors) done by this lift
     RequestBuffer* buffer; //Lift request buffer
-    int* done; //Tracks whether all requests have been read from lift request file
 } LiftThreadInfo;
 
 //Information for lift operation (movement from one floor to another)

@@ -1,6 +1,7 @@
 #include "Request.h"
 #include <stdlib.h>
-
+#include <time.h>
+#include <errno.h>
 
 /** Creates and initialises request buffer to default values
  */
@@ -71,22 +72,49 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
 Request* getRequestFromBuffer(RequestBuffer* buffer)
 {
     Request* request;
+    int waitStatus = 0;
+    struct timespec* specTime = (struct timespec*)malloc(sizeof(struct timespec));
 
     pthread_mutex_lock(buffer->mutex); //Initiate lock on buffer
 
-    //Check if buffer is empty and wait until it is not
-    while (buffer->used <= 0)
+    //Check if buffer is empty and wait until it is not (or until timeout occurs)
+    while (buffer->used <= 0 && waitStatus == 0)
     {
+        //Setting up timespec
+        localtime(&(specTime->tv_sec)); //First gets current epoch time
+        specTime->tv_sec += BUFFER_TIMEOUT_S; //Adds seconds waiting time
+        specTime->tv_nsec = BUFFER_TIMEOUT_NS; //Adds nanoseconds waiting time
+
         //Wait for buffer producer to signal that new request has been added
-        pthread_cond_wait(buffer->addedCond, buffer->mutex);
+        waitStatus = pthread_cond_timedwait(buffer->addedCond, buffer->mutex, specTime);
+
+        if (waitStatus != 0)
+        {
+            if (waitStatus == ETIMEDOUT)
+            {
+                pritnf("Buffer request timed out\n"); //DEBUG
+            }
+            else //If other error occured
+            {
+                printf("Rrequest retrival wait failed with non-standard error");
+            }
+
+            //Setting request to null to return (indicating timeout/error)
+            request = NULL;
+        }
     }
 
-    //Getting request from last slot in buffer array & decreasign used count
-    request = buffer->reqArray[buffer->used - 1];
-    buffer->used--;
+    if (waitStatus == 0) //If a request is available to be retrieved (no timeout)
+    {
+        //Getting request from last slot in buffer array & decreasing used count
+        request = buffer->reqArray[buffer->used - 1];
+        buffer->used--;
 
-    //Signal that a request has been removed from the buffer (i.e. buffer can no longer be full)
-    pthread_cond_signal(buffer->removedCond);
+        //Signal that a request has been removed from the buffer (i.e. buffer can no longer be full)
+        pthread_cond_signal(buffer->removedCond);
+    }
+
+    pthread_mutex_unlock(buffer->mutex); //Release lock on buffer
 
     return request;
 }

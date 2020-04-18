@@ -2,6 +2,11 @@
 #define REQUEST_H
 
 #include <pthread.h>
+#include <math.h>
+
+//Preprocessor Constants//
+#define BUFFER_TIMEOUT_S 0 //Number of seconds request retrieval waits before timing out
+#define BUFFER_TIMEOUT_NS (5 * powl(10, 8)) //Number of nanoseconds request retrieval waits before timing out
 
 //Structs//
 //Lift request
