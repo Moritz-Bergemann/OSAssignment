@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -pedantic -lpthread -lm
+CFLAGS = -Wall -Werror -pedantic -lpthread -lm -g
 OBJ = Main.o Lift.o LiftR.o Request.o
 EXEC = lift_sim_A
 

@@ -1,4 +1,2 @@
-- Handle what happends when LiftR finishes reading file but lift processes are still looking for new requests
-    - Could handle by making lift processes wait a certain amount of time and then cancelling if no new requests come in?
-    - Could make request process send some kind of signal informing lifts that it is complete
-SOLVED: I did both, still need to implmement the wait part
+CURRENT ISSUE:
+LiftR adds to capacity, then Lifts immediately terminate. LiftR then infinitely waits for someone to remove something from the buffer.

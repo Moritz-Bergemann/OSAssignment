@@ -74,7 +74,8 @@ void manageThreads(int bufferSize, int serviceLength)
     //Opening requirements & log files & creating mutex for log file
     FILE* reqFile = fopen(INPUT_FILE_PATH, "r");
     FILE* logFile = fopen(OUTPUT_FILE_PATH, "w");
-    pthread_mutex_t* logFileMutex;
+
+    pthread_mutex_t* logFileMutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     pthread_mutex_init(logFileMutex, NULL);
 
     //Setting up information for request process
@@ -104,8 +105,15 @@ void manageThreads(int bufferSize, int serviceLength)
         }
         else
         {
-            printf("Fatal error - failed to create all threads\n");
+            printf("Error: failed to create all threads\n");
         }
+
+        //Waiting for all threads to complete
+        pthread_join(liftR, NULL);
+        pthread_join(lift1, NULL);
+        pthread_join(lift2, NULL);
+        pthread_join(lift3, NULL);
+
     }
     else
     {
@@ -122,7 +130,7 @@ void manageThreads(int bufferSize, int serviceLength)
     free(liftInfo2);
     free(liftInfo3);
 
-    printf("Exiting...\n");
+    printf("All threads joined! Exiting...\n");
 }
 
 /** Checks imported filename points to a valid file with the correct number of requests

@@ -1,5 +1,6 @@
 #include "Request.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include <errno.h>
 
@@ -15,6 +16,10 @@ RequestBuffer* createRequestBuffer(int size)
     buffer->used = 0;
     buffer->done = (int*)malloc(sizeof(int));
     *(buffer->done) = 0; //Initialising done flag to false
+
+    buffer->mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+    buffer->addedCond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t));
+    buffer->removedCond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t));
     pthread_mutex_init(buffer->mutex, NULL); //Initialising mutex
     pthread_cond_init(buffer->addedCond, NULL); //Initialising empty condition
     pthread_cond_init(buffer->removedCond, NULL); //Initialising full condition
@@ -58,7 +63,9 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
 
     //Adding request to next open slot in buffer array & increasing used count
     buffer->reqArray[buffer->used] = request;
-    buffer->used++;
+    (buffer->used)++;
+
+    printf("Buffer: Request %d-%d added\n", request->start, request->dest); //DEBUG
 
     //Signal that a request has been added to the buffer (i.e. buffer can no longer be empty)
     pthread_cond_signal(buffer->addedCond);
@@ -92,11 +99,11 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
         {
             if (waitStatus == ETIMEDOUT)
             {
-                pritnf("Buffer request timed out\n"); //DEBUG
+                printf("Buffer: request timed out\n"); //DEBUG
             }
             else //If other error occured
             {
-                printf("Rrequest retrival wait failed with non-standard error");
+                printf("Buffer: Request retrival wait failed with non-standard error\n"); //DEBUG
             }
 
             //Setting request to null to return (indicating timeout/error)
@@ -108,10 +115,12 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
     {
         //Getting request from last slot in buffer array & decreasing used count
         request = buffer->reqArray[buffer->used - 1];
-        buffer->used--;
+        (buffer->used)--;
 
         //Signal that a request has been removed from the buffer (i.e. buffer can no longer be full)
         pthread_cond_signal(buffer->removedCond);
+
+        printf("Buffer: Request %d-%d retrieved\n", request->start, request->dest); //DEBUG
     }
 
     pthread_mutex_unlock(buffer->mutex); //Release lock on buffer
@@ -124,11 +133,15 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
  */
 void markDone(RequestBuffer* buffer)
 {
+    printf("Buffer: Waiting for empty to mark as done\n"); //DEBUG
+    printf("Buffer: Initial used - %d\n", buffer->used); //DEBUG
+
     pthread_mutex_lock(buffer->mutex); //Locking buffer
 
     //Wait until all requests are removed from buffer
     while (buffer->used > 0) //While there are still requests in buffer
     {
+        printf("Buffer: Waiting on empty to mark done (current - %d)\n", buffer->used); //DEBUG
         //Wait until a request is removed from the buffer
         pthread_cond_wait(buffer->removedCond, buffer->mutex);
     }

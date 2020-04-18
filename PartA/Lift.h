@@ -2,6 +2,7 @@
 #define LIFT_H
 
 #include "Request.h" //Needed as used in this file's structs/methods
+#include <stdio.h>
 
 //Structs//
 //Information for the lift process
@@ -23,6 +24,7 @@ typedef struct {
     int movement; //Amount of floors moved in movement
 } LiftMovement;
 
+//Information for a lift operation (fulfilment of a request)
 typedef struct {
     int prevPos;
     int finalPos; 
