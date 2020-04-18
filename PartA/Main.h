@@ -7,9 +7,9 @@
 #define MIN_REQUESTS 50
 #define MAX_REQUESTS 100
 #define MAX_SERVICE_LENGTH  100
-#define REQUEST_FILE_NAME "sim_input.txt"
 #define NUM_FLOORS 20
-
+#define INPUT_FILE_PATH "sim_input.txt"
+#define OUTPUT_FILE_PATH "sim_output.txt"
 
 //Function headers//
 int main(int argc, char** argv);

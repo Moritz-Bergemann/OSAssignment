@@ -1,10 +1,11 @@
 #include "Lift.h"
 #include "Main.h"
 #include "Request.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
+#include <unistd.h>
 
 void *lift(void* infoVoid)
 {
@@ -24,14 +25,15 @@ void *lift(void* infoVoid)
 
         if (curRequest != NULL) //If getting request did not time out
         {
-            curOperation = performOperation(curRequest);
+            curOperation = performOperation(curRequest, info->curPosition, info->moveTime);
             
             info->totalMovement += curOperation->movement;
 
-            logOperation(curOperation);
+            logLiftOperation(info->logFile, info->logFileMutex, info->liftNum, 
+                                info->operationNo, curOperation, info->totalMovement);
 
             //Freeing components of current operation (including its associated request)
-            freeOperation(curOperation);
+            freeLiftOperation(curOperation);
         }
         else
         {
@@ -39,13 +41,14 @@ void *lift(void* infoVoid)
         }
     }
     
+    printf("Lift %d operation complete! Terminating...\n", info->liftNum);
 
     pthread_exit(NULL);
 }
 
 /** Creates and initialises LiftThreadInfo struct
  */
-LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
+LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, pthread_mutex_t* logFileMutex)
 {
     //Creating request info on heap
     LiftThreadInfo* info;
@@ -54,19 +57,24 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum)
     //Initialising struct values
     info->buffer = buffer;
     info->liftNum = liftNum;
+    info->moveTime = moveTime;
     info->totalMovement = 0;
+    info->operationNo = 0;
+    info->logFile = logFile;
+    info->logFileMutex = logFileMutex;
+    info->curPosition = 1;
 
     return info;
 }
 
 /** Frees the components of the imported LiftOperation AND its associated request
  */
-void freeOperation(LiftOperation* op)
+void freeLiftOperation(LiftOperation* op)
 {
-    free(op->op1);
-    if (op->op2 != NULL) //If second operation exists
+    free(op->move1);
+    if (op->move2 != NULL) //If second operation exists
     {
-        free(op->op2);
+        free(op->move2);
     }
 
     free(op->request);
@@ -74,6 +82,83 @@ void freeOperation(LiftOperation* op)
     free(op);
 }
 
-//TODO performOperation
+/** Performs lift operation for imported lift request
+ * 
+ */
+LiftOperation* performOperation(Request* request, int* curPosition, int moveTime)
+{
+    //Initialising lift operation
+    LiftOperation* operation;
+    operation = (LiftOperation*)malloc(sizeof(LiftOperation));
+    operation->request = request;
+    operation->prevPos = *curPosition;
+    operation->movement = 0;
+    operation->move1 = NULL;
+    operation->move2 = NULL;
+    
+    //Performing movement to request floor (if not already there)
+    if (*curPosition != request->start)
+    {
+        //Performing 1st lift move (to request start)
+        operation->move1 = liftMove(*curPosition, request->start, moveTime);
+        operation->movement += operation->move1->movement;
+        *curPosition = operation->move1->endFloor;
 
-//TODO logOperation
+        //Performing 2nd lift move (to request destination)
+        operation->move2 = liftMove(*curPosition, request->dest, moveTime);
+        operation->movement += operation->move2->movement;
+        *curPosition = operation->move2->endFloor;
+    }
+    else //Performing movement if already at request start
+    {
+        //Performing only lift move (to request destination)
+        operation->move1 = liftMove(*curPosition, request->dest, moveTime);
+        operation->movement += operation->move1->movement;
+        *curPosition = operation->move1->endFloor;
+    }
+    
+    operation->finalPos = *curPosition;
+    
+    return operation;
+} 
+
+LiftMovement* liftMove(int start, int end, int moveTime)
+{
+    LiftMovement* move = (LiftMovement*)malloc(sizeof(LiftMovement));
+    
+    //Set starting floor
+    move->startFloor = start;
+    
+    //Wait specified amount of time for lift to move
+    sleep(moveTime);
+
+    //Set ending floor
+    move->endFloor = end;
+
+    //Set amount moved (between floors)
+    move->movement = abs(end - start);
+
+    return move;
+}
+
+void logLiftOperation(FILE* file, pthread_mutex_t* fileMutex, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
+{
+    pthread_mutex_lock(fileMutex); //Locking log file
+
+    fprintf(file, "Lift-%d Operation\n", liftNum);
+    fprintf(file, "Previous position: Floor %d\n", op->prevPos);
+    fprintf(file, "Request: Floor %d to Floor %d\n", op->request->start, op->request->dest);
+    fprintf(file, "Detail operations:\n");
+    fprintf(file, "\tGo from Floor %d to Floor %d\n", op->move1->startFloor, op->move1->endFloor);
+    if (op->move2 != NULL) //If second move was performed
+    {
+        fprintf(file, "\tGo from Floor %d to Floor %d\n", op->move2->startFloor, op->move2->endFloor);
+    }
+    fprintf(file, "\t#movement for this request: %d\n", op->movement);
+    fprintf(file, "\t#request: %d\n", operationNo);
+    fprintf(file, "\tTotal #movement: %d\n", totalMovement);
+    fprintf(file, "Current position: floor %d\n", op->finalPos);
+    fprintf(file, "\n");
+
+    pthread_mutex_unlock(fileMutex); //Release lock on log file
+}

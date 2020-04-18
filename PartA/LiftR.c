@@ -18,23 +18,28 @@ void *request(void* infoVoid)
     //Getting information passed to this thread
     LiftRequestThreadInfo* info = (LiftRequestThreadInfo*)infoVoid;
 
+    int reqFileNum = 1;
+
     Request* newRequest;
     int fileEnded = 0; //Tracks whether requests have been exhausted (default false)
 
     while (!fileEnded)
     {
-        newRequest = getRequest(info->file);
+        newRequest = getRequest(info->reqFile);
         
         if (newRequest != NULL) //If request was successfully read from line in file
         {
             addRequestToBuffer(newRequest, info->buffer);
+            
+            info->requestNo++;
+
+            logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
         }
         else //If request was invalid
         {
             printf("LiftR: Invalid line in request file"); //DEBUG
             //TODO make this more detailed
         }
-        
     }
 
     //Marking all requests as complete once buffer is empty
@@ -81,7 +86,6 @@ Request* getRequest(FILE* file)
         {
             printf("LiftR: Starting floor not in valid range\n");
         }
-        
     }
 
     return newRequest;
@@ -89,7 +93,7 @@ Request* getRequest(FILE* file)
 
 /** Creates and initialises LiftRequestThreadInfo struct
  */
-LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
+LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile, FILE* logFile, pthread_mutex_t* logFileMutex)
 {
     //Creating request info on heap
     LiftRequestThreadInfo* info;
@@ -97,9 +101,27 @@ LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile)
 
     //Initialising struct values
     info->buffer = buffer;
-    info->file = reqFile;
+    info->reqFile = reqFile;
+    info->requestNo = 0;
+    info->logFile = logFile;
+    info->logFileMutex = logFileMutex;
 
     return info;
 }
 
-//TODO logRequestReceived
+/** Logs the receiving of the imported request in the imported log file. 
+ *  Blocks if the log file is in use
+ */
+void logRequestReceived(FILE* logFile, Request* request, int requestNo, pthread_mutex_t* mutex)
+{
+    pthread_mutex_lock(mutex); //Getting lock on log file
+
+    //Write to log file
+    fprintf(logFile, "--------------------------------------------\n");
+    fprintf(logFile, "\tNew Lift Request From Floor %d to Floor %d\n", request->start, request->dest);
+    fprintf(logFile, "Request No: %d\n", requestNo);
+    fprintf(logFile, "--------------------------------------------\n");
+    fpritnf(logFile, "\n");
+    
+    pthread_mutex_unlock(mutex); //Releasing lock on log file
+}
