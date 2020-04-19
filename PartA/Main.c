@@ -63,12 +63,11 @@ void printHelp()
     printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
 }
 
-/** Initiates threads TODO more info here
+/** Primary method, gets necessary information, creates threads & passes them
+ *  their information. Performs memory reservation and cleanup for this info.
  */
 void manageThreads(int bufferSize, int serviceLength)
 {
-    //Validating request file exists & contains correct number of requests
-
     //Creating and initialising request buffer
     RequestBuffer* reqBuffer;
     reqBuffer = createRequestBuffer(bufferSize);
@@ -80,11 +79,11 @@ void manageThreads(int bufferSize, int serviceLength)
     pthread_mutex_t* logFileMutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     pthread_mutex_init(logFileMutex, NULL);
 
-    //Setting up information for request process
+    //Setting up information for request thread
     LiftRequestThreadInfo* reqInfo;
     reqInfo = createReqThreadInfo(reqBuffer, reqFile, logFile, logFileMutex);
 
-    //Setting up information for 3 lift processes
+    //Setting up information for 3 lift thread
     LiftThreadInfo* liftInfo1, *liftInfo2, *liftInfo3;
     liftInfo1 = createLiftThreadInfo(reqBuffer, 1, serviceLength, logFile, logFileMutex);
     liftInfo2 = createLiftThreadInfo(reqBuffer, 2, serviceLength, logFile, logFileMutex);
@@ -134,5 +133,5 @@ void manageThreads(int bufferSize, int serviceLength)
     freeLiftThreadInfo(liftInfo3);
 
 
-    printf("All threads joined! Exiting...\n");
+    printf("Main: Exiting...\n");
 }
