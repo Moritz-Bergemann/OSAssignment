@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
+#include <unistd.h>
 
 /** Takes in & validates command line parameters
  */
@@ -49,6 +49,8 @@ int main(int argc, char** argv)
     {
         printHelp();
     }
+
+    return 0;
 }
 
 /** Outputs help for program
@@ -102,58 +104,35 @@ void manageThreads(int bufferSize, int serviceLength)
         if (success == 0) //If all threads created successfully DEBUG
         {
             printf("All threads created successfully!\n");
+
+                    //Waiting for all threads to complete
+                    pthread_join(liftR, NULL);
+                    pthread_join(lift1, NULL);
+                    pthread_join(lift2, NULL);
+                    pthread_join(lift3, NULL);
         }
         else
         {
             printf("Error: failed to create all threads\n");
         }
-
-        //Waiting for all threads to complete
-        pthread_join(liftR, NULL);
-        pthread_join(lift1, NULL);
-        pthread_join(lift2, NULL);
-        pthread_join(lift3, NULL);
-
     }
     else
     {
-        printf("Error - failed to open request and/or log file. Operations aborted.\n");
+        printf("Error: failed to open request and/or log file. Operations aborted.\n");
     }
 
     //Performing cleanup
     fclose(reqFile); //Closing requests file
+    free(logFileMutex);
+
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
 
     //Freeing thread info structs
     free(reqInfo);
-    free(liftInfo1);
-    free(liftInfo2);
-    free(liftInfo3);
+    freeLiftThreadInfo(liftInfo1);
+    freeLiftThreadInfo(liftInfo2);
+    freeLiftThreadInfo(liftInfo3);
+
 
     printf("All threads joined! Exiting...\n");
-}
-
-/** Checks imported filename points to a valid file with the correct number of requests
- *  (though it does not check whether these requests are valid)
- */
-FILE* checkFile(char* path)
-{
-    FILE* file;
-
-    file = fopen(path, "r'");
-
-    if (file == NULL)
-    {
-        fatalError("Failed to open requests file");;
-    }
-
-    return file;
-}
-
-//TODO refactor so this isn't needed, it really doesn't work when you need cleanup and thread safety
-void fatalError(char* message)
-{
-    printf("Fatal Error: %s\n", message);
-    printf("Exiting...\n");
-    exit(1); //Exit with error code 1
 }

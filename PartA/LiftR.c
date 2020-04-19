@@ -76,7 +76,7 @@ int getRequest(FILE* file, Request** requestAddr)
         {
             if ((destFloor >= 1) && (destFloor <= NUM_FLOORS)) //Validating destination floor range
             {
-                printf("LiftR: Line is valid!\n"); //DEBUG
+                // printf("LiftR: Line is valid!\n"); //DEBUG
                 
                 //Creating request struct & giving it the validated values
                 newRequest = (Request*)malloc(sizeof(Request));
@@ -134,10 +134,10 @@ void logRequestReceived(FILE* logFile, Request* request, int requestNo, pthread_
     pthread_mutex_lock(mutex); //Getting lock on log file
 
     //Write to log file
-    fprintf(logFile, "--------------------------------------------\n");
-    fprintf(logFile, "\tNew Lift Request From Floor %d to Floor %d\n", request->start, request->dest);
-    fprintf(logFile, "Request No: %d\n", requestNo);
-    fprintf(logFile, "--------------------------------------------\n");
+    fprintf(logFile, "---------------------------------------------\n");
+    fprintf(logFile, "  New Lift Request From Floor %d to Floor %d\n", request->start, request->dest);
+    fprintf(logFile, "  Request No: %d\n", requestNo);
+    fprintf(logFile, "---------------------------------------------\n");
     fprintf(logFile, "\n");
     
     pthread_mutex_unlock(mutex); //Releasing lock on log file

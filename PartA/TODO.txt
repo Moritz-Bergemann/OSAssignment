@@ -1,2 +1,1 @@
-CURRENT ISSUE:
-LiftR adds to capacity, then Lifts immediately terminate. LiftR then infinitely waits for someone to remove something from the buffer.
+- Make sure the sums always add up

@@ -74,6 +74,14 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int mov
     return info;
 }
 
+/** Frees the LiftRequestThreadInfo struct at the imported pointer and its contents.
+ */
+void freeLiftThreadInfo(LiftThreadInfo* info)
+{
+    free(info->curPosition);
+    free(info);
+}
+
 /** Frees the components of the imported LiftOperation AND its associated request
  */
 void freeLiftOperation(LiftOperation* op)

@@ -15,6 +15,4 @@
 int main(int argc, char** argv);
 void printHelp();
 void manageThreads(int bufferSize, int serviceLength);
-FILE* checkFile(char* path);
-void fatalError(char* message);
 #endif

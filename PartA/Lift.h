@@ -39,6 +39,7 @@ typedef struct {
 //Function headers//
 void *lift(void* liftInfoVoid);
 LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, pthread_mutex_t* logFileMutex);
+void freeLiftThreadInfo(LiftThreadInfo* info);
 void freeLiftOperation(LiftOperation* op);
 LiftOperation* performOperation(Request* request, int* curPosition, int moveTime);
 LiftMovement* liftMove(int start, int end, int moveTime);

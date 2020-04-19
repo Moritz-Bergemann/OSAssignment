@@ -5,8 +5,8 @@
 #include <math.h>
 
 //Preprocessor Constants//
-#define BUFFER_TIMEOUT_S 0 //Number of seconds request retrieval waits before timing out
-#define BUFFER_TIMEOUT_NS (5 * powl(10, 8)) //Number of nanoseconds request retrieval waits before timing out
+#define BUFFER_TIMEOUT_S 1 //Number of seconds request retrieval waits before timing out
+#define BUFFER_TIMEOUT_NS 0 //((int)(5 * powl(10, 8))) //Number of nanoseconds request retrieval waits before timing out
 
 //Structs//
 //Lift request
@@ -17,7 +17,7 @@ typedef struct {
 
 //Buffer of lift requests
 typedef struct {
-    Request** reqArray; //Array of (pointers to) buffer requests
+    Request** reqQueue; //Queue (i.e. Array with FIFO handling) of (pointers to) buffer requests
     int size; //Buffer size
     int used; //Number of requests currently in buffer
     int done; //Tracks whether all requests have been completed
