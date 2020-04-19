@@ -20,23 +20,26 @@ void *request(void* infoVoid)
 
     Request* newRequest = NULL;
     int fileEnded = 0; //Tracks whether requests have been exhausted (default false)
+    int lineNum = 0; //Tracks the current line number (for error messages)
 
     while (!fileEnded)
     {
+        lineNum++;
+
         //Getting request from file (placed into pointer, returns whether EOF reached)
         fileEnded = getRequest(info->reqFile, &newRequest);
         
         if (newRequest != NULL) //If request was successfully read from line in file
         {
             addRequestToBuffer(newRequest, info->buffer);
-            
-            info->requestNo++;
 
             logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
+
+            info->requestNo++;
         }
         else //If request was invalid
         {
-            printf("LiftR: Invalid line in request file\n"); //DEBUG
+            printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
             //TODO make this more detailed
         }
     }
@@ -116,7 +119,7 @@ LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile,
     //Initialising struct values
     info->buffer = buffer;
     info->reqFile = reqFile;
-    info->requestNo = 0;
+    info->requestNo = 1;
     info->logFile = logFile;
     info->logFileMutex = logFileMutex;
 

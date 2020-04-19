@@ -14,8 +14,7 @@ RequestBuffer* createRequestBuffer(int size)
     buffer->reqArray = (Request**)malloc(sizeof(Request*) * size);
     buffer->size = size;
     buffer->used = 0;
-    buffer->done = (int*)malloc(sizeof(int));
-    *(buffer->done) = 0; //Initialising done flag to false
+    buffer->done = 0; //Initialising done flag to false
 
     buffer->mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     buffer->addedCond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t));
@@ -38,9 +37,8 @@ void freeRequestBuffer(RequestBuffer* buffer)
         free((buffer->reqArray)[ii]);
     }
 
-    //Freeing the buffer array & done flag
+    //Freeing the buffer array
     free(buffer->reqArray);
-    free(buffer->done);
 
     //Freeing buffer itself
     free(buffer);
@@ -147,7 +145,7 @@ void markDone(RequestBuffer* buffer)
     }
 
     //Set done to true as buffer is empty
-    *(buffer->done) = 1;
+    buffer->done = 1;
 
     pthread_mutex_unlock(buffer->mutex); //Unlocking buffer
 }

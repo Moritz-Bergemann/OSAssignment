@@ -20,7 +20,7 @@ typedef struct {
     Request** reqArray; //Array of (pointers to) buffer requests
     int size; //Buffer size
     int used; //Number of requests currently in buffer
-    int* done; //Tracks whether all requests have been completed
+    int done; //Tracks whether all requests have been completed
     pthread_mutex_t* mutex; // Mutex lock on buffer contents (pointer as that is how mutex is handled)
     pthread_cond_t* addedCond; //Mutex condition used to let processes wait when buffer is empty
     pthread_cond_t* removedCond; //Mutex condition for waiting when buffer full

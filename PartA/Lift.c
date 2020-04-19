@@ -36,6 +36,8 @@ void *lift(void* infoVoid)
             logLiftOperation(info->logFile, info->logFileMutex, info->liftNum, 
                                 info->operationNo, curOperation, info->totalMovement);
 
+            (info->operationNo)++;
+
             //Freeing components of current operation (including its associated request)
             freeLiftOperation(curOperation);
         }
@@ -63,7 +65,7 @@ LiftThreadInfo* createLiftThreadInfo(RequestBuffer* buffer, int liftNum, int mov
     info->liftNum = liftNum;
     info->moveTime = moveTime;
     info->totalMovement = 0;
-    info->operationNo = 0;
+    info->operationNo = 1;
     info->logFile = logFile;
     info->logFileMutex = logFileMutex;
     info->curPosition = (int*)malloc(sizeof(int));
