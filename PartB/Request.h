@@ -1,8 +1,8 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include <pthread.h>
 #include <math.h>
+#include <semaphore.h>
 
 //Preprocessor Constants//
 #define BUFFER_TIMEOUT_S 1 //Number of seconds request retrieval waits before timing out
@@ -21,9 +21,9 @@ typedef struct {
     int size; //Buffer size
     int used; //Number of requests currently in buffer
     int done; //Tracks whether all requests have been completed
-    pthread_mutex_t* mutex; // Mutex lock on buffer contents (pointer as that is how mutex is handled)
-    pthread_cond_t* addedCond; //Mutex condition used to let processes wait when buffer is empty
-    pthread_cond_t* removedCond; //Mutex condition for waiting when buffer full
+    sem_t* sem; // Binary semaphore lock on buffer contents (pointer as that is how semaphore is handled)
+    sem_t* fullSem; //When this semaphore empty, buffer is empty
+    sem_t* emptySem; //When this semaphore empty, buffer is full
 } RequestBuffer;
 
 

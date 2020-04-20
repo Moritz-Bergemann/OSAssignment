@@ -5,6 +5,10 @@
         "request.h": "c",
         "main.h": "c",
         "stdlib.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "semaphore.h": "c",
+        "time.h": "c",
+        "errno.h": "c",
+        "struct_timespec.h": "c"
     }
 }

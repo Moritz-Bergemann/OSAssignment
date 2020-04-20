@@ -77,22 +77,21 @@ void manageProcesses(int bufferSize, int serviceLength)
     FILE* reqFile = fopen(INPUT_FILE_PATH, "r");
     FILE* logFile = fopen(OUTPUT_FILE_PATH, "w");
 
-    //TODO setup log semaphore AND make each IO operation be performed individually
-    pthread_mutex_t* logFileMutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t)); 
-    pthread_mutex_init(logFileMutex, NULL);
+    //Create log semaphore
+    sem_t *logSem;
+    sem_init(logSem, 1, 1); /*Creating log as binary semaphore (only 1 logfile resource) 
+        initialised to be shared betweeen processes*/
 
     //Setting up information for request process
     LiftRequestProcessInfo* liftRInfo;
-    liftRInfo = createReqProcessInfo(reqBuffer, reqFile, logFile, logFileMutex);
+    liftRInfo = createReqProcessInfo(reqBuffer, reqFile, logFile, logSem);
     
     //Setting up information for lift processes
     LiftProcessInfo* liftInfoArr[NUM_LIFTS];
     for (int ii = 0; ii < NUM_LIFTS; ii++)
     {
-        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, logFile, logFileMutex);
+        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, logFile, logSem);
     }
-
-
 
     if (reqFile != NULL && logFile != NULL) //If both required files opened successfully
     {
@@ -174,7 +173,8 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     //Performing cleanup
     fclose(reqFile); //Closing requests file
-    free(logFileMutex);
+    sem_destroy(logSem);
+    free(logSem);
 
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
 

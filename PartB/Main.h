@@ -15,5 +15,5 @@
 //Function headers//
 int main(int argc, char** argv);
 void printHelp();
-void manageThreads(int bufferSize, int serviceLength);
+void manageProcesses(int bufferSize, int serviceLength);
 #endif
