@@ -16,4 +16,5 @@
 int main(int argc, char** argv);
 void printHelp();
 void manageProcesses(int bufferSize, int serviceLength);
+int contains(int num, int* array, int arraySize);
 #endif

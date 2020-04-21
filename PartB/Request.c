@@ -163,11 +163,11 @@ void markDone(RequestBuffer* buffer)
         printf("Buffer: Waiting on empty to mark done (current - %d)\n", buffer->used); //DEBUG
 
         //Unlock buffer
-        sem_post(buffer->done);
+        sem_post(buffer->sem);
 
         //Wait to access lock again to see if requests have been removed
         printf("Buffer: STARTING MARKDONE WAIT\n"); //DEBUG
-        sem_wait(buffer->done);
+        sem_wait(buffer->sem);
         printf("Buffer: MARKDONE WAIT COMPLETE\n"); //DEBUG
     }
 

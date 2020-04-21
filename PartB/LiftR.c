@@ -128,7 +128,7 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFil
  */
 void logRequestReceived(FILE* logFile, sem_t* logFileSem, Request* request, int requestNo)
 {
-    sem_wait; //Getting lock on log file
+    sem_wait(logFileSem); //Getting lock on log file
 
     //Write to log file
     fprintf(logFile, "---------------------------------------------\n");

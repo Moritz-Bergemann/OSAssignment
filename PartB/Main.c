@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <wait.h>
 
 /** Takes in & validates command line parameters
  */
@@ -79,7 +80,7 @@ void manageProcesses(int bufferSize, int serviceLength)
     FILE* logFile = fopen(OUTPUT_FILE_PATH, "w");
 
     //Create log semaphore
-    sem_t *logSem;
+    sem_t *logSem = (sem_t*)malloc(sizeof(sem_t));
     sem_init(logSem, 1, 1); /*Creating log as binary semaphore (only 1 logfile resource) 
         initialised to be shared betweeen processes*/
 
@@ -187,4 +188,23 @@ void manageProcesses(int bufferSize, int serviceLength)
     }
 
     printf("Main: Exiting...\n");
+}
+
+/** Returns true if the imported integer is contained in the imported integer array, 
+ *  and false otherwise.
+ */
+int contains(int num, int* array, int arraySize)
+{
+    int contained = 0;
+
+    for (int ii; ii < arraySize; ii++)
+    {
+        if (array[ii] == num)
+        {
+            contained = 1;
+            break;
+        }
+    }
+
+    return contained;
 }

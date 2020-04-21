@@ -10,6 +10,7 @@
         "time.h": "c",
         "errno.h": "c",
         "struct_timespec.h": "c",
-        "lift.h": "c"
+        "lift.h": "c",
+        "wait.h": "c"
     }
 }
