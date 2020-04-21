@@ -83,7 +83,7 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
  *  be removed, or until timeout occurs.
  *  Timeout (where no requests added over a given time period) included so that if this method is called once/during
  *      the removal of all requests (& the finishing of the file so no more are added) the wait will not be performed
- *      indefinitely, allowing the thread to return to main and exit gracefully.
+ *      indefinitely, allowing the process to return to main and exit gracefully.
  */
 Request* getRequestFromBuffer(RequestBuffer* buffer)
 {
@@ -133,7 +133,7 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
 
         (buffer->used)--;
 
-        pthread_mutex_unlock(buffer->sem); //Release lock on buffer
+        sem_post(buffer->sem); //Release lock on buffer
         printf("Buffer: LOCK RELEASED AFTER RETRIEVAL\n");
 
         //Signal that a request has been removed from the buffer (i.e. buffer can no longer be full)

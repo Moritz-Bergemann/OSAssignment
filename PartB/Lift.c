@@ -4,16 +4,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <semaphore.h>
 #include <unistd.h>
 
-void *lift(void* infoVoid)
+int lift(LiftProcessInfo* info)
 {
     // printf("Hi, I'm lift process number %d\n", liftInfo->liftNum); //DEBUG
-
-    //Getting lift information from lift
-    LiftProcessInfo* info;
-    info = (LiftProcessInfo*)infoVoid;
 
     Request* curRequest; //Current request being worked on
     LiftOperation* curOperation;
@@ -33,7 +29,7 @@ void *lift(void* infoVoid)
 
             printf("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
 
-            logLiftOperation(info->logFile, info->logFileMutex, info->liftNum, 
+            logLiftOperation(info->logFile, info->logFileSem, info->liftNum, 
                                 info->operationNo, curOperation, info->totalMovement);
 
             (info->operationNo)++;
@@ -49,12 +45,12 @@ void *lift(void* infoVoid)
     
     printf("Lift-%d: operation complete! Terminating...\n", info->liftNum);
 
-    pthread_exit(NULL);
+    return 0;
 }
 
 /** Creates and initialises LiftProcessInfo struct
  */
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, pthread_mutex_t* logFileMutex)
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, sem_t* logFileSem)
 {
     //Creating request info on heap
     LiftProcessInfo* info;
@@ -67,7 +63,7 @@ LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int m
     info->totalMovement = 0;
     info->operationNo = 1;
     info->logFile = logFile;
-    info->logFileMutex = logFileMutex;
+    info->logFileSem = logFileSem;
     info->curPosition = (int*)malloc(sizeof(int));
     *(info->curPosition) = 1;
 
@@ -156,10 +152,10 @@ LiftMovement* liftMove(int start, int end, int moveTime)
     return move;
 }
 
-void logLiftOperation(FILE* file, pthread_mutex_t* fileMutex, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
+void logLiftOperation(FILE* file, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
 {
     printf("Lift: Making log...\n");
-    pthread_mutex_lock(fileMutex); //Locking log file
+    sem_wait(logFileSem); //Locking log file
 
     fprintf(file, "Lift-%d Operation\n", liftNum);
     fprintf(file, "Previous position: Floor %d\n", op->prevPos);
@@ -176,5 +172,5 @@ void logLiftOperation(FILE* file, pthread_mutex_t* fileMutex, int liftNum, int o
     fprintf(file, "Current position: floor %d\n", op->finalPos);
     fprintf(file, "\n");
 
-    pthread_mutex_unlock(fileMutex); //Release lock on log file
+    sem_post(logFileSem); //Release lock on log file
 }

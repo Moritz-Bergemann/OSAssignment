@@ -6,17 +6,14 @@
 #include "Main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <semaphore.h>
 
-/** Primary method of LiftR (lift request handler) thread.
+/** Primary method of LiftR (lift request handler) process.
  *  Performs file reading, validating & adding contents to the array.
  */
-void *request(void* infoVoid)
+int request(LiftRequestProcessInfo* info)
 {
     // printf("Hi, I'm the elevator request handler\n"); //DEBUG
-
-    //Getting information passed to this thread
-    LiftRequestProcessInfo* info = (LiftRequestProcessInfo*)infoVoid;
 
     Request* newRequest = NULL;
     int fileEnded = 0; //Tracks whether requests have been exhausted (default false)
@@ -33,7 +30,7 @@ void *request(void* infoVoid)
         {
             addRequestToBuffer(newRequest, info->buffer);
 
-            logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
+            logRequestReceived(info->logFile, info->logFileSem, newRequest, info->requestNo);
 
             info->requestNo++;
         }
@@ -50,7 +47,7 @@ void *request(void* infoVoid)
     printf("LiftR: All requests read from file!\n"); //DEBUG
     printf("LiftR: Exiting...\n"); //DEBUG
 
-    pthread_exit(NULL);
+    return 0;
 }
 
 /** Reads a line from the imported file & attempts to parse it as a lift request.
@@ -110,7 +107,7 @@ int getRequest(FILE* file, Request** requestAddr)
 
 /** Creates and initialises LiftRequestProcessInfo struct
  */
-LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFile, FILE* logFile, pthread_mutex_t* logFileMutex)
+LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFile, FILE* logFile, sem_t* logFileSem)
 {
     //Creating request info on heap
     LiftRequestProcessInfo* info;
@@ -121,7 +118,7 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFil
     info->reqFile = reqFile;
     info->requestNo = 1;
     info->logFile = logFile;
-    info->logFileMutex = logFileMutex;
+    info->logFileSem = logFileSem;
 
     return info;
 }
@@ -129,9 +126,9 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFil
 /** Logs the receiving of the imported request in the imported log file. 
  *  Blocks if the log file is in use
  */
-void logRequestReceived(FILE* logFile, Request* request, int requestNo, pthread_mutex_t* mutex)
+void logRequestReceived(FILE* logFile, sem_t* logFileSem, Request* request, int requestNo)
 {
-    pthread_mutex_lock(mutex); //Getting lock on log file
+    sem_wait; //Getting lock on log file
 
     //Write to log file
     fprintf(logFile, "---------------------------------------------\n");
@@ -140,5 +137,5 @@ void logRequestReceived(FILE* logFile, Request* request, int requestNo, pthread_
     fprintf(logFile, "---------------------------------------------\n");
     fprintf(logFile, "\n");
     
-    pthread_mutex_unlock(mutex); //Releasing lock on log file
+    sem_post(logFileSem); //Releasing lock on log file
 }

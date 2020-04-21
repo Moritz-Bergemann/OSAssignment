@@ -63,7 +63,8 @@ void printHelp()
     printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
 }
 
-/** Initiates threads TODO more info here
+/** Splits main process into sub-processes and calls their relevant methods. Performs resource
+ *  preparation and cleanup. Creates shared memory between processes
  */
 void manageProcesses(int bufferSize, int serviceLength)
 {
@@ -95,7 +96,7 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     if (reqFile != NULL && logFile != NULL) //If both required files opened successfully
     {
-        //Creating threads
+        //Creating processes
         int success = 1;
         
         //Create and run lift request handler process
@@ -133,7 +134,7 @@ void manageProcesses(int bufferSize, int serviceLength)
                     AND so that the loop does not cause each child process to fork into its own
                     children)*/
                 exit(0);
-            } //Else this is the parent thread, pidArr[] will now contain the child's PID
+            } //Else this is the parent process, pidArr[] will now contain the child's PID
         }
     
         if (success) //If all processes created successfully DEBUG
@@ -178,7 +179,7 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
 
-    //Freeing thread info structs
+    //Freeing process info structs
     free(liftRInfo);
     for (int ii = 0; ii < NUM_LIFTS; ii++)
     {

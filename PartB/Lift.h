@@ -3,6 +3,7 @@
 
 #include "Request.h" //Needed as used in this file's structs/methods
 #include <stdio.h>
+#include <semaphore.h>
 
 //Structs//
 //Information for the lift process
@@ -14,7 +15,7 @@ typedef struct {
     RequestBuffer* buffer; //Lift request buffer
     int operationNo; //Number of requests this lift has fulfilled
     FILE* logFile;
-    pthread_mutex_t* logFileMutex; //Mutex for log file
+    sem_t* logFileSem; //Binary semaphore for log file
 } LiftProcessInfo;
 
 //Information for lift movement (from one floor to another)
@@ -37,12 +38,12 @@ typedef struct {
 } LiftOperation;
 
 //Function headers//
-void *lift(void* liftInfoVoid);
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, pthread_mutex_t* logFileMutex);
+int lift(LiftProcessInfo* info);
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, sem_t* logFileSem);
 void freeLiftProcessInfo(LiftProcessInfo* info);
 void freeLiftOperation(LiftOperation* op);
 LiftOperation* performOperation(Request* request, int* curPosition, int moveTime);
 LiftMovement* liftMove(int start, int end, int moveTime);
-void logLiftOperation(FILE* file, pthread_mutex_t* fileMutex, int liftNum, int operationNo, LiftOperation* op, int totalMovement);
+void logLiftOperation(FILE* file, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement);
 
 #endif
