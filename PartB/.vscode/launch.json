@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/lift_sim_A",
+            "program": "${workspaceFolder}/test",
             "args": ["10", "1"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

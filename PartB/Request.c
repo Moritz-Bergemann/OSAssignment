@@ -1,31 +1,44 @@
+#define _GNU_SOURCE 
 #include "Request.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/mman.h>
 
 
-/** Creates and initialises request buffer to default values
+/** Creates and initialises request buffer in shared memory to default values
  */
 RequestBuffer* createRequestBuffer(int size) 
-{
-    RequestBuffer* buffer;
-    buffer = (RequestBuffer*)malloc(sizeof(RequestBuffer));
-    
-    buffer->reqQueue = (Request**)malloc(sizeof(Request*) * size);
+{    
+    RequestBuffer* buffer = (RequestBuffer*)createSharedMemory(sizeof(RequestBuffer));
+
+    buffer->reqQueue = (Request*)createSharedMemory(sizeof(Request*) * size);
     buffer->size = size;
     buffer->used = 0;
     buffer->done = 0; //Initialising done flag to false
 
-    buffer->sem = (sem_t*)malloc(sizeof(sem_t));
-    buffer->fullSem = (sem_t*)malloc(sizeof(sem_t));
-    buffer->emptySem = (sem_t*)malloc(sizeof(sem_t));
+    buffer->sem = (sem_t*)createSharedMemory(sizeof(sem_t));
+    buffer->fullSem = (sem_t*)createSharedMemory(sizeof(sem_t));
+    buffer->emptySem = (sem_t*)createSharedMemory(sizeof(sem_t));
     sem_init(buffer->sem, 1, 1); //Initialising main buffer semaphore
     sem_init(buffer->fullSem, 1, 0); //Initialising full semaphore
     sem_init(buffer->emptySem, 1, 20); //Initialising empty semaphore (size initially since all slots 'empty')
 
     return buffer;
 }
+
+void* createSharedMemory(int size)
+{
+    //Setting memory to be readable & writeable
+    int protection = PROT_READ | PROT_WRITE;
+
+    int visibility = MAP_SHARED | MAP_ANONYMOUS;
+
+    //Creating & returning shared memory
+    return mmap(NULL, size, protection, visibility, -1, 0); //TODO check last 2 params
+}
+
 
 /** Free the imported buffer and all its contents
  */
@@ -35,22 +48,22 @@ void freeRequestBuffer(RequestBuffer* buffer)
     int ii;
     for (ii = 0; ii < buffer->used; ii++)
     {
-        free((buffer->reqQueue)[ii]);
+        munmap((buffer->reqQueue)[ii], sizeof(Request));
     }
 
     //Freeing the buffer array
-    free(buffer->reqQueue);
+    munmap(buffer->reqQueue, sizeof(Request*) * buffer->size);
 
     //Freeing semaphores    
     sem_destroy(buffer->sem);
     sem_destroy(buffer->fullSem);
     sem_destroy(buffer->emptySem);    
-    free(buffer->sem);
-    free(buffer->fullSem);
-    free(buffer->emptySem);
+    munmap(buffer->sem, sizeof(sem_t));
+    munmap(buffer->fullSem, sizeof(sem_t));
+    munmap(buffer->emptySem, sizeof(sem_t));
 
     //Freeing buffer itself
-    free(buffer);
+    munmap(buffer, sizeof(RequestBuffer));
 }
 
 /** Adds the imported request to the imported buffer. Blocks if buffer is full until request can 

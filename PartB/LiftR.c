@@ -19,34 +19,46 @@ int request(LiftRequestProcessInfo* info)
     int fileEnded = 0; //Tracks whether requests have been exhausted (default false)
     int lineNum = 0; //Tracks the current line number (for error messages)
 
-    while (!fileEnded)
+    FILE* reqFile = fopen(info->reqFilePath, "r");
+    
+    if (reqFile != NULL) //If request file successfully opened
     {
-        lineNum++;
-
-        //Getting request from file (placed into pointer, returns whether EOF reached)
-        fileEnded = getRequest(info->reqFile, &newRequest);
-        
-        if (newRequest != NULL) //If request was successfully read from line in file
+        while (!fileEnded)
         {
-            addRequestToBuffer(newRequest, info->buffer);
+            lineNum++;
 
-            logRequestReceived(info->logFile, info->logFileSem, newRequest, info->requestNo);
+            //Getting request from file (placed into pointer, returns whether EOF reached)
+            fileEnded = getRequest(info->reqFilePath, &newRequest);
+            
+            if (newRequest != NULL) //If request was successfully read from line in file
+            {
+                addRequestToBuffer(newRequest, info->buffer);
 
-            info->requestNo++;
+                logRequestReceived(info->logFilePath, info->logFileSem, newRequest, info->requestNo);
+
+                info->requestNo++;
+            }
+            else //If request was invalid
+            {
+                printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
+                //TODO make this more detailed
+            }
         }
-        else //If request was invalid
-        {
-            printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
-            //TODO make this more detailed
-        }
+
+        //Marking all requests as complete once buffer is empty
+        markDone(info->buffer);
+
+        printf("LiftR: All requests read from file!\n"); //DEBUG
+        printf("LiftR: Exiting...\n"); //DEBUG
     }
-
-    //Marking all requests as complete once buffer is empty
-    markDone(info->buffer);
-
-    printf("LiftR: All requests read from file!\n"); //DEBUG
-    printf("LiftR: Exiting...\n"); //DEBUG
-
+    else
+    {
+        printf("LiftR: Failed to open request file! Aborting operation...\n");
+        
+        //Marking buffer operation as 'done' to inform lift processes they should exit
+        info->buffer->done = 1;
+    }
+    
     return 0;
 }
 
@@ -107,7 +119,7 @@ int getRequest(FILE* file, Request** requestAddr)
 
 /** Creates and initialises LiftRequestProcessInfo struct
  */
-LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFile, FILE* logFile, sem_t* logFileSem)
+LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, char* reqFilePath, char* logFilePath, sem_t* logFileSem)
 {
     //Creating request info on heap
     LiftRequestProcessInfo* info;
@@ -115,9 +127,9 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFil
 
     //Initialising struct values
     info->buffer = buffer;
-    info->reqFile = reqFile;
+    info->reqFilePath = reqFilePath;
     info->requestNo = 1;
-    info->logFile = logFile;
+    info->logFilePath = logFilePath;
     info->logFileSem = logFileSem;
 
     return info;
@@ -126,16 +138,28 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, FILE* reqFil
 /** Logs the receiving of the imported request in the imported log file. 
  *  Blocks if the log file is in use
  */
-void logRequestReceived(FILE* logFile, sem_t* logFileSem, Request* request, int requestNo)
+void logRequestReceived(char* logFilePath, sem_t* logFileSem, Request* request, int requestNo)
 {
     sem_wait(logFileSem); //Getting lock on log file
 
-    //Write to log file
-    fprintf(logFile, "---------------------------------------------\n");
-    fprintf(logFile, "  New Lift Request From Floor %d to Floor %d\n", request->start, request->dest);
-    fprintf(logFile, "  Request No: %d\n", requestNo);
-    fprintf(logFile, "---------------------------------------------\n");
-    fprintf(logFile, "\n");
-    
+    FILE* logFile = fopen(logFilePath, "a");
+
+    if (logFile != NULL)
+    {
+        //Write to log file
+        fprintf(logFile, "---------------------------------------------\n");
+        fprintf(logFile, "  New Lift Request From Floor %d to Floor %d\n", request->start, request->dest);
+        fprintf(logFile, "  Request No: %d\n", requestNo);
+        fprintf(logFile, "---------------------------------------------\n");
+        fprintf(logFile, "\n");
+        
+        fclose(logFile);
+    }
+    else
+    {
+        printf("LiftR: Failed to open log file! No logs written.\n");
+    }
+
     sem_post(logFileSem); //Releasing lock on log file
+
 }

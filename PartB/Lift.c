@@ -29,7 +29,7 @@ int lift(LiftProcessInfo* info)
 
             printf("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
 
-            logLiftOperation(info->logFile, info->logFileSem, info->liftNum, 
+            logLiftOperation(info->logFilePath, info->logFileSem, info->liftNum, 
                                 info->operationNo, curOperation, info->totalMovement);
 
             (info->operationNo)++;
@@ -50,7 +50,7 @@ int lift(LiftProcessInfo* info)
 
 /** Creates and initialises LiftProcessInfo struct
  */
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, FILE* logFile, sem_t* logFileSem)
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem)
 {
     //Creating request info on heap
     LiftProcessInfo* info;
@@ -62,7 +62,7 @@ LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int m
     info->moveTime = moveTime;
     info->totalMovement = 0;
     info->operationNo = 1;
-    info->logFile = logFile;
+    info->logFilePath = logFilePath;
     info->logFileSem = logFileSem;
     info->curPosition = (int*)malloc(sizeof(int));
     *(info->curPosition) = 1;
@@ -152,25 +152,36 @@ LiftMovement* liftMove(int start, int end, int moveTime)
     return move;
 }
 
-void logLiftOperation(FILE* file, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
+void logLiftOperation(char* logFilePath, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
 {
     printf("Lift: Making log...\n");
     sem_wait(logFileSem); //Locking log file
 
-    fprintf(file, "Lift-%d Operation\n", liftNum);
-    fprintf(file, "Previous position: Floor %d\n", op->prevPos);
-    fprintf(file, "Request: Floor %d to Floor %d\n", op->request->start, op->request->dest);
-    fprintf(file, "Detail operations:\n");
-    fprintf(file, "\tGo from Floor %d to Floor %d\n", op->move1->startFloor, op->move1->endFloor);
-    if (op->move2 != NULL) //If second move was performed
+    FILE* logFile = fopen(logFilePath, "a");
+
+    if (logFile != NULL)
     {
-        fprintf(file, "\tGo from Floor %d to Floor %d\n", op->move2->startFloor, op->move2->endFloor);
+        fprintf(logFile, "Lift-%d Operation\n", liftNum);
+        fprintf(logFile, "Previous position: Floor %d\n", op->prevPos);
+        fprintf(logFile, "Request: Floor %d to Floor %d\n", op->request->start, op->request->dest);
+        fprintf(logFile, "Detail operations:\n");
+        fprintf(logFile, "\tGo from Floor %d to Floor %d\n", op->move1->startFloor, op->move1->endFloor);
+        if (op->move2 != NULL) //If second move was performed
+        {
+            fprintf(logFile, "\tGo from Floor %d to Floor %d\n", op->move2->startFloor, op->move2->endFloor);
+        }
+        fprintf(logFile, "\t#movement for this request: %d\n", op->movement);
+        fprintf(logFile, "\t#request: %d\n", operationNo);
+        fprintf(logFile, "\tTotal #movement: %d\n", totalMovement);
+        fprintf(logFile, "Current position: floor %d\n", op->finalPos);
+        fprintf(logFile, "\n");
+
+        fclose(logFile);
     }
-    fprintf(file, "\t#movement for this request: %d\n", op->movement);
-    fprintf(file, "\t#request: %d\n", operationNo);
-    fprintf(file, "\tTotal #movement: %d\n", totalMovement);
-    fprintf(file, "Current position: floor %d\n", op->finalPos);
-    fprintf(file, "\n");
+    else
+    {
+        printf("Lift: Failed to open log file! No logs written.\n");
+    }
 
     sem_post(logFileSem); //Release lock on log file
 }

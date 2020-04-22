@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <wait.h>
+#include <sys/mman.h>
 
 /** Takes in & validates command line parameters
  */
@@ -71,6 +72,7 @@ void manageProcesses(int bufferSize, int serviceLength)
 {
     //Validating request file exists & contains correct number of requests
 
+    //REQUEST BUFFER OPERATIONS
     //Creating and initialising request buffer
     RequestBuffer* reqBuffer;
     reqBuffer = createRequestBuffer(bufferSize);
@@ -86,16 +88,16 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     //Setting up information for request process
     LiftRequestProcessInfo* liftRInfo;
-    liftRInfo = createReqProcessInfo(reqBuffer, reqFile, logFile, logSem);
+    liftRInfo = createReqProcessInfo(reqBuffer, reqFile, OUTPUT_FILE_PATH, logSem);
     
     //Setting up information for lift processes
     LiftProcessInfo* liftInfoArr[NUM_LIFTS];
     for (int ii = 0; ii < NUM_LIFTS; ii++)
     {
-        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, logFile, logSem);
+        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, OUTPUT_FILE_PATH, logSem);
     }
 
-    if (reqFile != NULL && logFile != NULL) //If both required files opened successfully
+    if (reqFile != NULL && logFile != NULL) //If both required files opened successfully (still done for log file as check it exists)
     {
         //Creating processes
         int success = 1;
