@@ -118,11 +118,25 @@ void manageThreads(int bufferSize, int serviceLength)
                 pthread_join(liftArr[ii], NULL);
                 printf("Lift-%d operation complete!\n", ii + 1);
             }
+
+            //Writing final statistics to log file (no mutex needed since all threads complete)
+            int totalRequests = reqInfo->requestNo;
+            int totalMovement = 0;
+            for (int ii = 0; ii < NUM_LIFTS; ii++)
+            {
+                totalMovement += liftInfoArr[ii]->totalMovement;
+            }
+
+            fprintf(logFile, "Total number of requests: %d\n", totalRequests);
+            fprintf(logFile, "Total number of movements: %d", totalMovement); //No '\n' as end of file
         }
         else
         {
             printf("Error: failed to create all threads\n");
         }
+
+        //Closing requests file
+        fclose(reqFile); 
     }
     else
     {
@@ -130,7 +144,6 @@ void manageThreads(int bufferSize, int serviceLength)
     }
 
     //Performing cleanup
-    fclose(reqFile); //Closing requests file
     free(logFileMutex);
 
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method

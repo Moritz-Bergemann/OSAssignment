@@ -33,6 +33,8 @@ int request(LiftRequestProcessInfo* info)
             if (newRequest != NULL) //If request was successfully read from line in file
             {
                 addRequestToBuffer(newRequest, info->buffer);         
+                
+                info->requestNo++;
 
                 logRequestReceived(info->logFilePath, info->logFileSem, newRequest, info->requestNo);
 
@@ -42,8 +44,6 @@ int request(LiftRequestProcessInfo* info)
                 free(newRequest);
 
                 printf("LiftR: Finished free\n"); //TEMP DEBUG
-
-                info->requestNo++;
             }
             else //If request was invalid
             {
@@ -66,6 +66,9 @@ int request(LiftRequestProcessInfo* info)
         info->buffer->done = 1;
     }
     
+    //Setting number of total requests to be shared with main process
+    *(info->sharedTotalRequests) = info->requestNo;
+
     return 0;
 }
 
@@ -126,7 +129,7 @@ int getRequest(FILE* file, Request** requestAddr)
 
 /** Creates and initialises LiftRequestProcessInfo struct
  */
-LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, char* reqFilePath, char* logFilePath, sem_t* logFileSem)
+LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, char* reqFilePath, char* logFilePath, sem_t* logFileSem, int* sharedTotalRequests)
 {
     //Creating request info on heap
     LiftRequestProcessInfo* info;
@@ -135,9 +138,11 @@ LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, char* reqFil
     //Initialising struct values
     info->buffer = buffer;
     info->reqFilePath = reqFilePath;
-    info->requestNo = 1;
+    info->requestNo = 0;
     info->logFilePath = logFilePath;
     info->logFileSem = logFileSem;
+
+    info->sharedTotalRequests = sharedTotalRequests;
 
     return info;
 }

@@ -16,6 +16,7 @@ typedef struct {
     int operationNo; //Number of requests this lift has fulfilled
     char* logFilePath; //Path to log file
     sem_t* logFileSem; //Binary semaphore for log file
+    int* sharedTotalMovement; 
 } LiftProcessInfo;
 
 //Information for lift movement (from one floor to another)
@@ -39,7 +40,7 @@ typedef struct {
 
 //Function headers//
 int lift(LiftProcessInfo* info);
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem);
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem, int* sharedTotalMovement);
 void freeLiftProcessInfo(LiftProcessInfo* info);
 void freeLiftOperation(LiftOperation* op);
 LiftOperation* performOperation(Request* request, int* curPosition, int moveTime);

@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "Lift.h"
 #include <stdio.h>
 
 //Preprocessor constants//
@@ -16,5 +17,6 @@
 int main(int argc, char** argv);
 void printHelp();
 void manageProcesses(int bufferSize, int serviceLength);
+void waitForProcesses(pid_t* liftPidArr, pid_t liftRPid, LiftProcessInfo** liftInfoArr);
 int contains(int num, int* array, int arraySize);
 #endif

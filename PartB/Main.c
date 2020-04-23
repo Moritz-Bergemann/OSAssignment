@@ -86,15 +86,21 @@ void manageProcesses(int bufferSize, int serviceLength)
     sem_init(logSem, 1, 1); /*Creating log as binary semaphore (only 1 logfile resource) 
         initialised to be shared betweeen processes*/
 
+    //Setting up shared memory for sending final statistics from created processes
+    int* sharedTotalRequests = (int*)createSharedMemory(sizeof(int));
+    *sharedTotalRequests = 0;
+    int* sharedTotalMovement = (int*)createSharedMemory(sizeof(int));
+    *sharedTotalMovement = 0;
+
     //Setting up information for request process
     LiftRequestProcessInfo* liftRInfo;
-    liftRInfo = createReqProcessInfo(reqBuffer, INPUT_FILE_PATH, OUTPUT_FILE_PATH, logSem);
+    liftRInfo = createReqProcessInfo(reqBuffer, INPUT_FILE_PATH, OUTPUT_FILE_PATH, logSem, sharedTotalRequests);
     
     //Setting up information for lift processes
     LiftProcessInfo* liftInfoArr[NUM_LIFTS];
     for (int ii = 0; ii < NUM_LIFTS; ii++)
     {
-        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, OUTPUT_FILE_PATH, logSem);
+        liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, OUTPUT_FILE_PATH, logSem, sharedTotalMovement);
     }
 
     if (reqFile != NULL && logFile != NULL) //If requirements file opened successfully
@@ -149,44 +155,13 @@ void manageProcesses(int bufferSize, int serviceLength)
             printf("All processes created successfully!\n");
 
             //Wait for all processes to complete
-            pid_t completePid;
-            for (int ii = 0; ii < NUM_LIFTS + 1; ii++)
-            {
-                //Waiting for process to complete, returns PID of completed process
-                completePid = wait(NULL);
-
-                if (completePid == liftRPid)
-                {
-                    printf("Main: Lift request handler opration complete!\n"); //DEBUG
-                }
-                else if (contains(completePid, liftPidArr, NUM_LIFTS))
-                {
-                    //Getting lift number of lift process that just completed
-                    int arrPos = -1;
-                    int found = 0;
-                    while (arrPos < NUM_LIFTS && !found)
-                    {
-                        arrPos++;
-                        if (liftPidArr[arrPos] == completePid)
-                        {
-                            found = 1;
-                        }
-                    }
-                    if (found)
-                    {
-                        printf("Main: Lift-%d operation complete!\n", liftInfoArr[arrPos]->liftNum);
-                    }
-                    else
-                    {
-                        printf("Error: Lift with unknown number complete!\n");
-                    }
-                    
-                }
-                else 
-                {
-                    printf("Error - undefined process complete?!\n"); //DEBUG
-                }
-            }
+            waitForProcesses(liftPidArr,liftRPid, liftInfoArr);
+            
+            //Adding final statistics to log file
+            FILE* logFile = fopen(OUTPUT_FILE_PATH, "a");\
+            fprintf(logFile, "Total number of requests: %d\n", *sharedTotalRequests);
+            fprintf(logFile, "Total number of movements: %d", *sharedTotalMovement); //No '\n' as end of file
+            fclose(logFile);
         }
         else
         {
@@ -203,6 +178,10 @@ void manageProcesses(int bufferSize, int serviceLength)
     sem_destroy(logSem);
     munmap(logSem, sizeof(sem_t));
 
+    //Freeing final statistics information
+    munmap(sharedTotalRequests, sizeof(int));
+    munmap(sharedTotalMovement, sizeof(int));
+
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
 
     //Freeing process info structs
@@ -213,6 +192,47 @@ void manageProcesses(int bufferSize, int serviceLength)
     }
 
     printf("Main: Exiting...\n");
+}
+
+void waitForProcesses(pid_t* liftPidArr, pid_t liftRPid, LiftProcessInfo** liftInfoArr)
+{
+    pid_t completePid;
+
+    for (int ii = 0; ii < NUM_LIFTS + 1; ii++)
+    {
+        completePid = wait(NULL);
+
+        if (completePid == liftRPid) //If completed process is lift request handler process
+        {
+            printf("Main: Lift request handler operation complete!\n"); //DEBUG
+        }
+        else if (contains(completePid, liftPidArr, NUM_LIFTS)) //If completed process is one of lift processes
+        {
+            //Getting lift number of lift process that just completed
+            int arrPos = -1;
+            int found = 0;
+            while (arrPos < NUM_LIFTS && !found)
+            {
+                arrPos++;
+                if (liftPidArr[arrPos] == completePid)
+                {
+                    found = 1;
+                }
+            }
+            if (found)
+            {
+                printf("Main: Lift-%d operation complete!\n", liftInfoArr[arrPos]->liftNum);
+            }
+            else
+            {
+                printf("Error: Lift with unknown number complete!\n");
+            }
+        }
+        else 
+        {
+            printf("Error - undefined process complete?!\n"); //DEBUG
+        }
+    }
 }
 
 /** Returns true if the imported integer is contained in the imported integer array, 

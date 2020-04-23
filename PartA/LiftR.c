@@ -33,9 +33,9 @@ void *request(void* infoVoid)
         {
             addRequestToBuffer(newRequest, info->buffer);
 
-            logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
-
             info->requestNo++;
+
+            logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
         }
         else //If request was invalid
         {
@@ -119,7 +119,7 @@ LiftRequestThreadInfo* createReqThreadInfo(RequestBuffer* buffer, FILE* reqFile,
     //Initialising struct values
     info->buffer = buffer;
     info->reqFile = reqFile;
-    info->requestNo = 1;
+    info->requestNo = 0;
     info->logFile = logFile;
     info->logFileMutex = logFileMutex;
 

@@ -46,12 +46,15 @@ int lift(LiftProcessInfo* info)
     
     printf("Lift-%d: operation complete! Terminating...\n", info->liftNum);
 
+    //Adding total movement of this lift to the overall total movement shared with main process
+    *(info->sharedTotalMovement) += info->totalMovement;
+
     return 0;
 }
 
 /** Creates and initialises LiftProcessInfo struct
  */
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem)
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem, int* sharedTotalMovement)
 {
     //Creating request info on heap
     LiftProcessInfo* info;
@@ -67,6 +70,8 @@ LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int m
     info->logFileSem = logFileSem;
     info->curPosition = (int*)malloc(sizeof(int));
     *(info->curPosition) = 1;
+
+    info->sharedTotalMovement = sharedTotalMovement;
 
     return info;
 }
