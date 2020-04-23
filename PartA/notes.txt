@@ -1,1 +1,0 @@
-- If value in file is invalid just abort the program?
