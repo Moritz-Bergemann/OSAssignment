@@ -58,7 +58,7 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
     pthread_mutex_lock(buffer->mutex); //Initiate lock on buffer
     printf("Buffer: LOCKED FOR REQUEST ADD\n"); //DEBUG
     
-    //Check if the buffer is full and wait until it is not  //TODO CHECK IF THIS IS RIGHT
+    //Check if the buffer is full and wait until it is not
     while (buffer->used >= buffer->size) /*While is necessary as other stuff may have refilled buffer 
         after signalling before this process gets its turn*/
     {
@@ -80,7 +80,6 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
 
     pthread_mutex_unlock(buffer->mutex); //Release lock on buffer
     printf("Buffer: UNLOCKED AFTER REQUEST ADD\n"); //DEBUG
-
 }
 
 /** Returns a request from front the imported buffer. Blocks if buffer is empty until request can successfully

@@ -17,7 +17,7 @@ int lift(LiftProcessInfo* info)
 
     //Attempt to read requests while all requests from file have not been completed
     printf("Lift-%d: Starting retrievals\n", info->liftNum); //DEBUG
-    while (!(info->buffer->done)) //If timeout occurs, this check will continue to be performed FIXME DOES THIS NEED TO GET A LOCK ON BUFFER
+    while (!(info->buffer->done)) //If timeout occurs, this check will continue to be performed
     {
         printf("Lift-%d: Trying to get request from buffer\n", info->liftNum); //DEBUG
         curRequest = getRequestFromBuffer(info->buffer);

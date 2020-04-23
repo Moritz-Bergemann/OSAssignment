@@ -39,7 +39,7 @@ void* createSharedMemory(int size)
     int visibility = MAP_SHARED | MAP_ANONYMOUS;
 
     //Creating & returning shared memory
-    return mmap(NULL, size, protection, visibility, -1, 0); //TODO check last 2 params
+    return mmap(NULL, size, protection, visibility, -1, 0);
 }
 
 /** Free the imported buffer and all its contents
@@ -139,7 +139,7 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
         //Shuffling all other entries towards front
         for (int ii = 1; ii < buffer->used; ii++)
         {
-            buffer->reqQueue[ii - 1] = buffer->reqQueue[ii]; //FIXME make sure this works
+            buffer->reqQueue[ii - 1] = buffer->reqQueue[ii];
         }
 
         (buffer->used)--;

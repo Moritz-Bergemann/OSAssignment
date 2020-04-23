@@ -59,8 +59,8 @@ int main(int argc, char** argv)
  */
 void printHelp()
 {
-    printf("Lift simulation A by Moritz Bergemann:\n");
-    printf("Run in format \"lift_sim_A m t\"\n");
+    printf("Lift simulation B by Moritz Bergemann:\n");
+    printf("Run in format \"lift_sim_B m t\"\n");
     printf("\t m: Buffer size (must be between 1 & %d)\n", MAX_REQUESTS);
     printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
 }
