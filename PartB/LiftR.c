@@ -36,8 +36,12 @@ int request(LiftRequestProcessInfo* info)
 
                 logRequestReceived(info->logFilePath, info->logFileSem, newRequest, info->requestNo);
 
+                printf("LiftR: Finished logging request %d-%d\n", newRequest->start, newRequest->dest); //DEBUG
+
                 //Freeing request (since buffer created a copy in shared memory)
                 free(newRequest);
+
+                printf("LiftR: Finished free\n"); //TEMP DEBUG
 
                 info->requestNo++;
             }
@@ -91,7 +95,7 @@ int getRequest(FILE* file, Request** requestAddr)
                 // printf("LiftR: Line is valid!\n"); //DEBUG
                 
                 //Creating request struct & giving it the validated values
-                newRequest = (Request*)createSharedMemory(sizeof(Request));
+                newRequest = (Request*)malloc(sizeof(Request));
                 newRequest->start = startFloor;
                 newRequest->dest = destFloor;
             }
@@ -160,7 +164,7 @@ void logRequestReceived(char* logFilePath, sem_t* logFileSem, Request* request, 
     }
     else
     {
-        printf("LiftR: Failed to open log file! No logs written.\n");
+        printf("LiftR: Failed to open log file! No logs written.\n"); //DEBUG
     }
 
     sem_post(logFileSem); //Releasing lock on log file

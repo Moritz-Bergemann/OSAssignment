@@ -13,7 +13,10 @@ RequestBuffer* createRequestBuffer(int size)
 {    
     RequestBuffer* buffer = (RequestBuffer*)createSharedMemory(sizeof(RequestBuffer));
 
+    /*Creating buffer queue as direct queue of Request structs (rather than Request struct pointers)
+        to ensure the requests are stored in shared memory and accessible by all processes*/
     buffer->reqQueue = (Request*)createSharedMemory(sizeof(Request) * size);
+
     buffer->size = size;
     buffer->used = 0;
     buffer->done = 0; //Initialising done flag to false
@@ -38,7 +41,6 @@ void* createSharedMemory(int size)
     //Creating & returning shared memory
     return mmap(NULL, size, protection, visibility, -1, 0); //TODO check last 2 params
 }
-
 
 /** Free the imported buffer and all its contents
  */
@@ -110,13 +112,13 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
 
     if (waitStatus != 0) //If wait did not allow for semaphore retrieval
     {
-        if (waitStatus == ETIMEDOUT)
+        if (errno == ETIMEDOUT) //If timeout error occurred (sem_timedwait then sets 'errno' variable)
         {
-            printf("Buffer: WAIT TIMED OUT (Error code %d)\n", waitStatus); //DEBUG
+            printf("Buffer: RETRIEVAL WAIT TIMED OUT (Error code %d)\n", errno); //DEBUG
         }
         else //If other error occured
         {
-            printf("Buffer: Request retrival wait failed with non-standard error\n"); //DEBUG
+            printf("Buffer: Request retrival wait failed with non-standard error - %d\n", errno); //DEBUG
         }
         
         //Setting request to null to return (indicating timeout/error)
@@ -169,15 +171,15 @@ void markDone(RequestBuffer* buffer)
 
     while(buffer->used > 0)
     {
-        printf("Buffer: Waiting on empty to mark done (current - %d)\n", buffer->used); //DEBUG
+        // printf("Buffer: Waiting on empty to mark done (current - %d)\n", buffer->used); //DEBUG
 
         //Unlock buffer
         sem_post(buffer->sem);
 
         //Wait to access lock again to see if requests have been removed
-        printf("Buffer: STARTING MARKDONE WAIT\n"); //DEBUG
+        // printf("Buffer: STARTING MARKDONE WAIT\n"); //DEBUG
         sem_wait(buffer->sem);
-        printf("Buffer: MARKDONE WAIT COMPLETE\n"); //DEBUG
+        // printf("Buffer: MARKDONE WAIT COMPLETE\n"); //DEBUG
     }
 
     //Set done to true as buffer is empty
