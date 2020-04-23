@@ -79,7 +79,6 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     //Opening requirements & log files & creating mutex for log file
     FILE* reqFile = fopen(INPUT_FILE_PATH, "r");
-    FILE* logFile = fopen(OUTPUT_FILE_PATH, "w");
 
     //Create log semaphore
     sem_t *logSem = (sem_t*)malloc(sizeof(sem_t));
@@ -88,7 +87,7 @@ void manageProcesses(int bufferSize, int serviceLength)
 
     //Setting up information for request process
     LiftRequestProcessInfo* liftRInfo;
-    liftRInfo = createReqProcessInfo(reqBuffer, reqFile, OUTPUT_FILE_PATH, logSem);
+    liftRInfo = createReqProcessInfo(reqBuffer, INPUT_FILE_PATH, OUTPUT_FILE_PATH, logSem);
     
     //Setting up information for lift processes
     LiftProcessInfo* liftInfoArr[NUM_LIFTS];
@@ -97,7 +96,7 @@ void manageProcesses(int bufferSize, int serviceLength)
         liftInfoArr[ii] = createLiftProcessInfo(reqBuffer, (ii + 1), serviceLength, OUTPUT_FILE_PATH, logSem);
     }
 
-    if (reqFile != NULL && logFile != NULL) //If both required files opened successfully (still done for log file as check it exists)
+    if (reqFile != NULL) //If requirements file opened successfully
     {
         //Creating processes
         int success = 1;
@@ -178,7 +177,7 @@ void manageProcesses(int bufferSize, int serviceLength)
     //Performing cleanup
     fclose(reqFile); //Closing requests file
     sem_destroy(logSem);
-    free(logSem);
+    munmap(logSem, sizeof(sem_t));
 
     freeRequestBuffer(reqBuffer); //Freeing requests buffer using custom method
 

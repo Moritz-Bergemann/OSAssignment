@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <unistd.h>
+#include <sys/mman.h>
 
 int lift(LiftProcessInfo* info)
 {

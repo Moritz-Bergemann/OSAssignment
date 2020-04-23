@@ -28,13 +28,16 @@ int request(LiftRequestProcessInfo* info)
             lineNum++;
 
             //Getting request from file (placed into pointer, returns whether EOF reached)
-            fileEnded = getRequest(info->reqFilePath, &newRequest);
+            fileEnded = getRequest(reqFile, &newRequest);
             
             if (newRequest != NULL) //If request was successfully read from line in file
             {
-                addRequestToBuffer(newRequest, info->buffer);
+                addRequestToBuffer(newRequest, info->buffer);         
 
                 logRequestReceived(info->logFilePath, info->logFileSem, newRequest, info->requestNo);
+
+                //Freeing request (since buffer created a copy in shared memory)
+                free(newRequest);
 
                 info->requestNo++;
             }
@@ -88,7 +91,7 @@ int getRequest(FILE* file, Request** requestAddr)
                 // printf("LiftR: Line is valid!\n"); //DEBUG
                 
                 //Creating request struct & giving it the validated values
-                newRequest = (Request*)malloc(sizeof(Request));
+                newRequest = (Request*)createSharedMemory(sizeof(Request));
                 newRequest->start = startFloor;
                 newRequest->dest = destFloor;
             }

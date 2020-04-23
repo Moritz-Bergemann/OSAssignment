@@ -13,7 +13,7 @@ RequestBuffer* createRequestBuffer(int size)
 {    
     RequestBuffer* buffer = (RequestBuffer*)createSharedMemory(sizeof(RequestBuffer));
 
-    buffer->reqQueue = (Request*)createSharedMemory(sizeof(Request*) * size);
+    buffer->reqQueue = (Request*)createSharedMemory(sizeof(Request) * size);
     buffer->size = size;
     buffer->used = 0;
     buffer->done = 0; //Initialising done flag to false
@@ -44,15 +44,8 @@ void* createSharedMemory(int size)
  */
 void freeRequestBuffer(RequestBuffer* buffer)
 {
-    //Freeing each existing request struct in buffer
-    int ii;
-    for (ii = 0; ii < buffer->used; ii++)
-    {
-        munmap((buffer->reqQueue)[ii], sizeof(Request));
-    }
-
     //Freeing the buffer array
-    munmap(buffer->reqQueue, sizeof(Request*) * buffer->size);
+    munmap(buffer->reqQueue, sizeof(Request) * buffer->size);
 
     //Freeing semaphores    
     sem_destroy(buffer->sem);
@@ -79,7 +72,8 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
     printf("Buffer: LOCKED FOR REQUEST ADD\n"); //DEBUG
 
     //Adding request to next open slot in buffer array & increasing used count
-    buffer->reqQueue[buffer->used] = request;
+    (buffer->reqQueue[buffer->used]).start = request->start;
+    (buffer->reqQueue[buffer->used]).dest = request->dest;
     (buffer->used)++;
 
     printf("Buffer: Request %d-%d added\n", request->start, request->dest); //DEBUG
@@ -92,7 +86,7 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
     sem_post(buffer->fullSem);
 }
 
-/** Returns a request from front the imported buffer. Blocks if buffer is empty until request can successfully
+/** Returns a request from front the imported buffer (as a copy). Blocks if buffer is empty until request can successfully
  *  be removed, or until timeout occurs.
  *  Timeout (where no requests added over a given time period) included so that if this method is called once/during
  *      the removal of all requests (& the finishing of the file so no more are added) the wait will not be performed
@@ -111,7 +105,7 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
 
     //Indicating request to be removed from buffer AND waiting in case item is added to buffer
     printf("Buffer: RETRIEVAL CHECKING/WAITING FOR NON-EMPTY BUFFER\n");
-    printf("\t Waiting for: %lld\n", (long long) specTime->tv_sec); //DEBUG
+    // printf("\t Waiting for: %lld\n", (long long) specTime->tv_sec); //DEBUG
     waitStatus = sem_timedwait(buffer->fullSem, specTime);
 
     if (waitStatus != 0) //If wait did not allow for semaphore retrieval
@@ -135,13 +129,15 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
         sem_wait(buffer->sem);
         printf("Buffer: LOCKED FOR RETRIEVAL\n"); //DEBUG
 
-        //Getting request from front slot in buffer array 
-        request = buffer->reqQueue[0];
+        //Creating copy of request in front slot of buffer array 
+        request = (Request*)malloc(sizeof(Request));
+        request->start = buffer->reqQueue[0].start;
+        request->dest = buffer->reqQueue[0].dest;
 
         //Shuffling all other entries towards front
         for (int ii = 1; ii < buffer->used; ii++)
         {
-            buffer->reqQueue[ii - 1] = buffer->reqQueue[ii];
+            buffer->reqQueue[ii - 1] = buffer->reqQueue[ii]; //FIXME make sure this works
         }
 
         (buffer->used)--;

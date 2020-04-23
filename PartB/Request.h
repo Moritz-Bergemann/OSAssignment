@@ -17,7 +17,7 @@ typedef struct {
 
 //Buffer of lift requests
 typedef struct {
-    Request** reqQueue; //Queue (i.e. Array with FIFO handling) of (pointers to) buffer requests
+    Request* reqQueue; //Queue (i.e. Array with FIFO handling) of (pointers to) buffer requests
     int size; //Buffer size
     int used; //Number of requests currently in buffer
     int done; //Tracks whether all requests have been completed
@@ -29,6 +29,7 @@ typedef struct {
 
 //Function headers//
 RequestBuffer* createRequestBuffer(int size);
+void* createSharedMemory(int size);
 void freeRequestBuffer(RequestBuffer* buffer);
 void addRequestToBuffer(Request* request, RequestBuffer* buffer);
 Request* getRequestFromBuffer(RequestBuffer* buffer);
