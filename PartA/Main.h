@@ -10,6 +10,7 @@
 #define NUM_FLOORS 20
 #define INPUT_FILE_PATH "sim_input.txt"
 #define OUTPUT_FILE_PATH "sim_output.txt"
+#define NUM_LIFTS 3
 
 //Function headers//
 int main(int argc, char** argv);

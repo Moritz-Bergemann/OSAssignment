@@ -155,8 +155,6 @@ void manageProcesses(int bufferSize, int serviceLength)
                 //Waiting for process to complete, returns PID of completed process
                 completePid = wait(NULL);
 
-                printf("PID: %d\n", completePid);
-
                 if (completePid == liftRPid)
                 {
                     printf("Main: Lift request handler opration complete!\n"); //DEBUG

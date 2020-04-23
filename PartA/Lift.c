@@ -47,7 +47,7 @@ void *lift(void* infoVoid)
         }
     }
     
-    printf("Lift-%d: operation complete! Terminating...\n", info->liftNum);
+    printf("Lift-%d: Terminating...\n", info->liftNum);
 
     pthread_exit(NULL);
 }

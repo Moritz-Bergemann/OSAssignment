@@ -83,32 +83,41 @@ void manageThreads(int bufferSize, int serviceLength)
     LiftRequestThreadInfo* reqInfo;
     reqInfo = createReqThreadInfo(reqBuffer, reqFile, logFile, logFileMutex);
 
-    //Setting up information for 3 lift thread
-    LiftThreadInfo* liftInfo1, *liftInfo2, *liftInfo3;
-    liftInfo1 = createLiftThreadInfo(reqBuffer, 1, serviceLength, logFile, logFileMutex);
-    liftInfo2 = createLiftThreadInfo(reqBuffer, 2, serviceLength, logFile, logFileMutex);
-    liftInfo3 = createLiftThreadInfo(reqBuffer, 3, serviceLength, logFile, logFileMutex);
+    //Setting up information for lift threads
+    LiftThreadInfo* liftInfoArr[NUM_LIFTS];
+    for (int ii = 0; ii < NUM_LIFTS; ii++)
+    {
+        liftInfoArr[ii] = createLiftThreadInfo(reqBuffer, (ii + 1), serviceLength, logFile, logFileMutex);
+    }
+
 
     if (reqFile != NULL && logFile != NULL) //If both required files opened successfully
     {
         //Creating threads
-        pthread_t liftR, lift1, lift2, lift3;
+        pthread_t liftR;
+        pthread_t liftArr[NUM_LIFTS];
         int success = 0;
 
         success += pthread_create(&liftR, NULL, request, (void*)reqInfo);
-        success += pthread_create(&lift1, NULL, lift, (void*)liftInfo1);
-        success += pthread_create(&lift2, NULL, lift, (void*)liftInfo2);
-        success += pthread_create(&lift3, NULL, lift, (void*)liftInfo3);
+
+        for (int ii = 0; ii < NUM_LIFTS; ii++)
+        {
+            success += pthread_create(&liftArr[ii], NULL, lift, (void*)liftInfoArr[ii]);
+        }
         
         if (success == 0) //If all threads created successfully DEBUG
         {
-            printf("All threads created successfully!\n");
+            printf("All threads created successfully! Running...\n");
 
-                    //Waiting for all threads to complete
-                    pthread_join(liftR, NULL);
-                    pthread_join(lift1, NULL);
-                    pthread_join(lift2, NULL);
-                    pthread_join(lift3, NULL);
+            //Waiting for all threads to complete
+            pthread_join(liftR, NULL);
+            printf("Lift request handler operation complete!\n");
+            
+            for (int ii = 0; ii < NUM_LIFTS; ii++)
+            {
+                pthread_join(liftArr[ii], NULL);
+                printf("Lift-%d operation complete!\n", ii + 1);
+            }
         }
         else
         {
@@ -128,10 +137,11 @@ void manageThreads(int bufferSize, int serviceLength)
 
     //Freeing thread info structs
     free(reqInfo);
-    freeLiftThreadInfo(liftInfo1);
-    freeLiftThreadInfo(liftInfo2);
-    freeLiftThreadInfo(liftInfo3);
-
+    
+    for (int ii = 0; ii < NUM_LIFTS; ii++)
+    {
+        freeLiftThreadInfo(liftInfoArr[ii]);
+    }
 
     printf("Main: Exiting...\n");
 }
