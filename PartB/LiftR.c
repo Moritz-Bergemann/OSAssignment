@@ -48,7 +48,6 @@ int request(LiftRequestProcessInfo* info)
             else //If request was invalid
             {
                 printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
-                //TODO make this more detailed
             }
         }
 

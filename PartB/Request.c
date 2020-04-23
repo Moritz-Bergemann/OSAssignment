@@ -26,7 +26,7 @@ RequestBuffer* createRequestBuffer(int size)
     buffer->emptySem = (sem_t*)createSharedMemory(sizeof(sem_t));
     sem_init(buffer->sem, 1, 1); //Initialising main buffer semaphore
     sem_init(buffer->fullSem, 1, 0); //Initialising full semaphore
-    sem_init(buffer->emptySem, 1, 20); //Initialising empty semaphore (size initially since all slots 'empty')
+    sem_init(buffer->emptySem, 1, size); //Initialising empty semaphore (size initially since all slots 'empty')
 
     return buffer;
 }
