@@ -82,7 +82,7 @@ void manageProcesses(int bufferSize, int serviceLength)
     FILE* logFile = fopen(OUTPUT_FILE_PATH, "w"); //Opening log file with 'write' flag to clear any previous contents
 
     //Create semaphore for log file
-    sem_t *logSem = (sem_t*)malloc(sizeof(sem_t));
+    sem_t *logSem = (sem_t*)createSharedMemory(sizeof(sem_t));
     sem_init(logSem, 1, 1); /*Creating log as binary semaphore (only 1 logfile resource) 
         initialised to be shared betweeen processes*/
 
