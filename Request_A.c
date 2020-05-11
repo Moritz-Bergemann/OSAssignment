@@ -42,6 +42,9 @@ void freeRequestBuffer(RequestBuffer* buffer)
     free(buffer->reqQueue);
 
     //Freeing mutexes & conditions
+    pthread_mutex_destroy(buffer->mutex);
+    pthread_cond_destroy(buffer->addedCond);
+    pthread_cond_destroy(buffer->removedCond);
     free(buffer->mutex);
     free(buffer->addedCond);
     free(buffer->removedCond);

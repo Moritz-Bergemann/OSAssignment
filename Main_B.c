@@ -31,7 +31,7 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                    printf("Error: Service duration must be between 1 & %d (inclusive)! Exiting...\n", MAX_SERVICE_LENGTH);
+                    printf("Error: Service duration must be between 0 & %d (inclusive)! Exiting...\n", MAX_SERVICE_LENGTH);
                 }
                 
             }
@@ -62,7 +62,7 @@ void printHelp()
     printf("Lift simulation B by Moritz Bergemann:\n");
     printf("Run in format \"lift_sim_B m t\"\n");
     printf("\t m: Buffer size (must be between 1 & %d)\n", MAX_REQUESTS);
-    printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
+    printf("\t t: Time required for lift service (must be between 0 & %d)\n", MAX_SERVICE_LENGTH);
 }
 
 /** Splits main process into sub-processes and calls their relevant methods. Performs resource

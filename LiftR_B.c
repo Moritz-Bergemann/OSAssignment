@@ -40,8 +40,6 @@ int request(LiftRequestProcessInfo* info)
 
                 //Freeing request (since buffer created a copy in shared memory)
                 free(newRequest);
-
-                DEBUG_PRINT("LiftR: Finished free\n"); //TEMP DEBUG
             }
             else //If request was invalid
             {

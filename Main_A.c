@@ -29,7 +29,7 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                    printf("Error: Service duration must be between 1 & %d (inclusive)! Exiting...\n", MAX_SERVICE_LENGTH);
+                    printf("Error: Service duration must be between 0 & %d (inclusive)! Exiting...\n", MAX_SERVICE_LENGTH);
                 }
                 
             }
@@ -60,7 +60,7 @@ void printHelp()
     printf("Lift simulation A by Moritz Bergemann:\n");
     printf("Run in format \"lift_sim_A m t\"\n");
     printf("\t m: Buffer size (must be between 1 & %d)\n", MAX_REQUESTS);
-    printf("\t t: Time required for lift service (must be between 1 & %d)\n", MAX_SERVICE_LENGTH);
+    printf("\t t: Time required for lift service (must be between 0 & %d)\n", MAX_SERVICE_LENGTH);
 }
 
 /** Primary method, gets necessary information, creates threads & passes them
@@ -135,8 +135,9 @@ void manageThreads(int bufferSize, int serviceLength)
             printf("Error: failed to create all threads\n");
         }
 
-        //Closing requests file
+        //Closing requests & log file
         fclose(reqFile); 
+        fclose(logFile);
     }
     else
     {

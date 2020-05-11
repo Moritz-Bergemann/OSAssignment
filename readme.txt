@@ -8,7 +8,7 @@ General Information:
 Compiling the Prorgam:
 - Both programs can be compiled from the root directory
 - The following instructions apply when running on a Linux operating system with GCC and make installed, 
-    from the bash terminal while inside the assignment's main directory ("OS/assignment")
+    from the bash terminal while inside the assignment's main directory ("19759948_OS_Assignment")
 - To compile both lift_sim_A and B, simply enter 'make' into the terminal
 - To compile lift_sim_A or B individually, enter 'make lift_sim_<A or B>'
 - To remove all compiled files, enter 'make clean'

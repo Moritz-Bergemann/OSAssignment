@@ -1,5 +1,0 @@
-Sample inputs & outputs
-REMOVE THIS
-MORE TESTING & WRITEUP ON "how you test your program to make you believe it works perfectly"
-
-- Make time taken one for each REQUEST, not for each movement
