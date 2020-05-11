@@ -124,7 +124,7 @@ Detail operations:
 	Total #movement: 28
 Current position: floor 7
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 1
 Request: Floor 7 to Floor 13
 Detail operations:
@@ -140,7 +140,12 @@ Current position: floor 13
   Request No: 24
 ---------------------------------------------
 
-Lift-2 Operation
+---------------------------------------------
+  New Lift Request From Floor 4 to Floor 6
+  Request No: 25
+---------------------------------------------
+
+Lift-3 Operation
 Previous position: Floor 1
 Request: Floor 7 to Floor 3
 Detail operations:
@@ -150,11 +155,6 @@ Detail operations:
 	#request: 1
 	Total #movement: 10
 Current position: floor 3
-
----------------------------------------------
-  New Lift Request From Floor 4 to Floor 6
-  Request No: 25
----------------------------------------------
 
 ---------------------------------------------
   New Lift Request From Floor 18 to Floor 1
@@ -172,12 +172,7 @@ Detail operations:
 	Total #movement: 35
 Current position: floor 8
 
----------------------------------------------
-  New Lift Request From Floor 15 to Floor 20
-  Request No: 27
----------------------------------------------
-
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 13
 Request: Floor 8 to Floor 10
 Detail operations:
@@ -189,11 +184,16 @@ Detail operations:
 Current position: floor 10
 
 ---------------------------------------------
+  New Lift Request From Floor 15 to Floor 20
+  Request No: 27
+---------------------------------------------
+
+---------------------------------------------
   New Lift Request From Floor 19 to Floor 20
   Request No: 28
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 3
 Request: Floor 13 to Floor 10
 Detail operations:
@@ -220,12 +220,7 @@ Detail operations:
 	Total #movement: 44
 Current position: floor 17
 
----------------------------------------------
-  New Lift Request From Floor 5 to Floor 15
-  Request No: 30
----------------------------------------------
-
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 10
 Request: Floor 10 to Floor 3
 Detail operations:
@@ -236,11 +231,16 @@ Detail operations:
 Current position: floor 3
 
 ---------------------------------------------
+  New Lift Request From Floor 5 to Floor 15
+  Request No: 30
+---------------------------------------------
+
+---------------------------------------------
   New Lift Request From Floor 12 to Floor 6
   Request No: 31
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 10
 Request: Floor 19 to Floor 3
 Detail operations:
@@ -272,7 +272,7 @@ Current position: floor 5
   Request No: 33
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 3
 Request: Floor 10 to Floor 16
 Detail operations:
@@ -288,7 +288,7 @@ Current position: floor 16
   Request No: 34
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 3
 Request: Floor 3 to Floor 9
 Detail operations:
@@ -319,7 +319,7 @@ Current position: floor 6
   Request No: 36
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 16
 Request: Floor 3 to Floor 11
 Detail operations:
@@ -335,7 +335,7 @@ Current position: floor 11
   Request No: 37
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 9
 Request: Floor 1 to Floor 6
 Detail operations:
@@ -367,7 +367,7 @@ Current position: floor 10
   Request No: 39
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 11
 Request: Floor 12 to Floor 15
 Detail operations:
@@ -383,7 +383,7 @@ Current position: floor 15
   Request No: 40
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 6
 Request: Floor 17 to Floor 10
 Detail operations:
@@ -415,7 +415,7 @@ Current position: floor 20
   Request No: 42
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 15
 Request: Floor 10 to Floor 16
 Detail operations:
@@ -431,7 +431,7 @@ Current position: floor 16
   Request No: 43
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 10
 Request: Floor 18 to Floor 8
 Detail operations:
@@ -463,7 +463,7 @@ Current position: floor 11
   Request No: 45
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 16
 Request: Floor 8 to Floor 7
 Detail operations:
@@ -479,7 +479,7 @@ Current position: floor 7
   Request No: 46
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 8
 Request: Floor 18 to Floor 15
 Detail operations:
@@ -511,7 +511,7 @@ Current position: floor 6
   Request No: 48
 ---------------------------------------------
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 7
 Request: Floor 18 to Floor 1
 Detail operations:
@@ -527,7 +527,7 @@ Current position: floor 1
   Request No: 49
 ---------------------------------------------
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 15
 Request: Floor 15 to Floor 20
 Detail operations:
@@ -553,7 +553,7 @@ Detail operations:
 	Total #movement: 139
 Current position: floor 20
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 1
 Request: Floor 6 to Floor 3
 Detail operations:
@@ -564,7 +564,7 @@ Detail operations:
 	Total #movement: 120
 Current position: floor 3
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 20
 Request: Floor 5 to Floor 15
 Detail operations:
@@ -586,7 +586,7 @@ Detail operations:
 	Total #movement: 153
 Current position: floor 6
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 3
 Request: Floor 14 to Floor 20
 Detail operations:
@@ -597,7 +597,7 @@ Detail operations:
 	Total #movement: 137
 Current position: floor 20
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 15
 Request: Floor 3 to Floor 18
 Detail operations:
@@ -619,7 +619,7 @@ Detail operations:
 	Total #movement: 162
 Current position: floor 11
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 20
 Request: Floor 5 to Floor 14
 Detail operations:
@@ -630,7 +630,7 @@ Detail operations:
 	Total #movement: 161
 Current position: floor 14
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 18
 Request: Floor 13 to Floor 12
 Detail operations:
@@ -652,7 +652,7 @@ Detail operations:
 	Total #movement: 169
 Current position: floor 12
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 14
 Request: Floor 19 to Floor 6
 Detail operations:
@@ -663,7 +663,7 @@ Detail operations:
 	Total #movement: 179
 Current position: floor 6
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 12
 Request: Floor 4 to Floor 18
 Detail operations:
@@ -685,7 +685,7 @@ Detail operations:
 	Total #movement: 180
 Current position: floor 3
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 6
 Request: Floor 6 to Floor 19
 Detail operations:
@@ -695,7 +695,7 @@ Detail operations:
 	Total #movement: 192
 Current position: floor 19
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 18
 Request: Floor 13 to Floor 16
 Detail operations:
@@ -717,7 +717,7 @@ Detail operations:
 	Total #movement: 197
 Current position: floor 20
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 19
 Request: Floor 10 to Floor 6
 Detail operations:
@@ -728,7 +728,7 @@ Detail operations:
 	Total #movement: 205
 Current position: floor 6
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 16
 Request: Floor 17 to Floor 9
 Detail operations:
@@ -750,7 +750,7 @@ Detail operations:
 	Total #movement: 210
 Current position: floor 7
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 6
 Request: Floor 8 to Floor 1
 Detail operations:
@@ -761,7 +761,7 @@ Detail operations:
 	Total #movement: 214
 Current position: floor 1
 
-Lift-2 Operation
+Lift-3 Operation
 Previous position: Floor 9
 Request: Floor 13 to Floor 8
 Detail operations:
@@ -783,7 +783,7 @@ Detail operations:
 	Total #movement: 221
 Current position: floor 18
 
-Lift-3 Operation
+Lift-2 Operation
 Previous position: Floor 1
 Request: Floor 18 to Floor 11
 Detail operations:

@@ -9,8 +9,6 @@
 
 void *lift(void* infoVoid)
 {
-    // printf("Hi, I'm lift process number %d\n", liftInfo->liftNum); //DEBUG
-
     //Getting lift information from lift
     LiftThreadInfo* info;
     info = (LiftThreadInfo*)infoVoid;
@@ -19,19 +17,22 @@ void *lift(void* infoVoid)
     LiftOperation* curOperation;
 
     //Attempt to read requests while all requests from file have not been completed
-    printf("Lift-%d: Starting retrievals\n", info->liftNum); //DEBUG
+    
+    DEBUG_PRINT("Lift-%d: Starting retrievals\n", info->liftNum);
+
     while (!(info->buffer->done)) //If timeout occurs, this check will continue to be performed
     {
-        printf("Lift-%d: Trying to get request from buffer\n", info->liftNum); //DEBUG
+        DEBUG_PRINT("Lift-%d: Trying to get request from buffer\n", info->liftNum); //DEBUG
         curRequest = getRequestFromBuffer(info->buffer);
 
         if (curRequest != NULL) //If getting request did not time out
         {
-            printf("Lift-%d: Performing Request %d to %d...\n", info->liftNum, curRequest->start, curRequest->dest); //DEBUG
+            DEBUG_PRINT("Lift-%d: Performing Request %d to %d...\n", info->liftNum, curRequest->start, curRequest->dest); //DEBUG
+            
             curOperation = performOperation(curRequest, info->curPosition, info->requestTime);
             info->totalMovement += curOperation->movement;
 
-            printf("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
+            DEBUG_PRINT("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
 
             logLiftOperation(info->logFile, info->logFileMutex, info->liftNum, 
                                 info->operationNo, curOperation, info->totalMovement);
@@ -43,11 +44,11 @@ void *lift(void* infoVoid)
         }
         else
         {
-            printf("Lift-%d: Request retrieval timed out\n", info->liftNum); //DEBUG
+            DEBUG_PRINT("Lift-%d: Request retrieval timed out\n", info->liftNum); //DEBUG
         }
     }
     
-    printf("Lift-%d: Terminating...\n", info->liftNum);
+    DEBUG_PRINT("Lift-%d: Terminating...\n", info->liftNum);
 
     pthread_exit(NULL);
 }
@@ -158,7 +159,6 @@ LiftMovement* liftMove(int start, int end)
 
 void logLiftOperation(FILE* file, pthread_mutex_t* fileMutex, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
 {
-    printf("Lift: Making log...\n");
     pthread_mutex_lock(fileMutex); //Locking log file
 
     fprintf(file, "Lift-%d Operation\n", liftNum);

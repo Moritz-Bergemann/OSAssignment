@@ -156,5 +156,5 @@ void manageThreads(int bufferSize, int serviceLength)
         freeLiftThreadInfo(liftInfoArr[ii]);
     }
 
-    printf("Main: Exiting...\n");
+    printf("Exiting...\n");
 }

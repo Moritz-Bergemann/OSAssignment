@@ -152,7 +152,7 @@ void manageProcesses(int bufferSize, int serviceLength)
     
         if (success) //If all processes created successfully DEBUG
         {
-            printf("All processes created successfully!\n");
+            printf("All processes created successfully! Running...\n");
 
             //Wait for all processes to complete
             waitForProcesses(liftPidArr,liftRPid, liftInfoArr);
@@ -191,7 +191,7 @@ void manageProcesses(int bufferSize, int serviceLength)
         freeLiftProcessInfo(liftInfoArr[ii]);
     }
 
-    printf("Main: Exiting...\n");
+    printf("Exiting...\n");
 }
 
 void waitForProcesses(pid_t* liftPidArr, pid_t liftRPid, LiftProcessInfo** liftInfoArr)
@@ -204,7 +204,7 @@ void waitForProcesses(pid_t* liftPidArr, pid_t liftRPid, LiftProcessInfo** liftI
 
         if (completePid == liftRPid) //If completed process is lift request handler process
         {
-            printf("Main: Lift request handler operation complete!\n"); //DEBUG
+            printf("Lift request handler operation complete!\n"); //DEBUG
         }
         else if (contains(completePid, liftPidArr, NUM_LIFTS)) //If completed process is one of lift processes
         {
@@ -221,16 +221,16 @@ void waitForProcesses(pid_t* liftPidArr, pid_t liftRPid, LiftProcessInfo** liftI
             }
             if (found)
             {
-                printf("Main: Lift-%d operation complete!\n", liftInfoArr[arrPos]->liftNum);
+                printf("Lift-%d operation complete!\n", liftInfoArr[arrPos]->liftNum);
             }
             else
             {
-                printf("Error: Lift with unknown number complete!\n");
+                printf("Lift with unknown number complete!\n");
             }
         }
         else 
         {
-            printf("Error - undefined process complete?!\n"); //DEBUG
+            printf("Error - undefined process complete!\n"); //DEBUG
         }
     }
 }

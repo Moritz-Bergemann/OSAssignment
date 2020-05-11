@@ -13,8 +13,6 @@
  */
 int request(LiftRequestProcessInfo* info)
 {
-    // printf("Hi, I'm the elevator request handler\n"); //DEBUG
-
     Request* newRequest = NULL;
     int fileEnded = 0; //Tracks whether requests have been exhausted (default false)
     int lineNum = 0; //Tracks the current line number (for error messages)
@@ -38,28 +36,28 @@ int request(LiftRequestProcessInfo* info)
 
                 logRequestReceived(info->logFilePath, info->logFileSem, newRequest, info->requestNo);
 
-                printf("LiftR: Finished logging request %d-%d\n", newRequest->start, newRequest->dest); //DEBUG
+                DEBUG_PRINT("LiftR: Finished logging request %d-%d\n", newRequest->start, newRequest->dest); //DEBUG
 
                 //Freeing request (since buffer created a copy in shared memory)
                 free(newRequest);
 
-                printf("LiftR: Finished free\n"); //TEMP DEBUG
+                DEBUG_PRINT("LiftR: Finished free\n"); //TEMP DEBUG
             }
             else //If request was invalid
             {
-                printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
+                DEBUG_PRINT("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
             }
         }
 
         //Marking all requests as complete once buffer is empty
         markDone(info->buffer);
 
-        printf("LiftR: All requests read from file!\n"); //DEBUG
-        printf("LiftR: Exiting...\n"); //DEBUG
+        DEBUG_PRINT("LiftR: All requests read from file!\n"); //DEBUG
+        DEBUG_PRINT("LiftR: Exiting...\n"); //DEBUG
     }
     else
     {
-        printf("LiftR: Failed to open request file! Aborting operation...\n");
+        DEBUG_PRINT("LiftR: Failed to open request file! Aborting operation...\n");
         
         //Marking buffer operation as 'done' to inform lift processes they should exit
         info->buffer->done = 1;
@@ -88,14 +86,12 @@ int getRequest(FILE* file, Request** requestAddr)
 
     if (sSuccesses == 2)
     {
-        printf("LiftR: Line scanned successfully\n"); //DEBUG
+        DEBUG_PRINT("LiftR: Line scanned successfully\n"); //DEBUG
         
         if ((startFloor >= 1) && (startFloor <= NUM_FLOORS)) //Validating starting floor range
         {
             if ((destFloor >= 1) && (destFloor <= NUM_FLOORS)) //Validating destination floor range
             {
-                // printf("LiftR: Line is valid!\n"); //DEBUG
-                
                 //Creating request struct & giving it the validated values
                 newRequest = (Request*)malloc(sizeof(Request));
                 newRequest->start = startFloor;
@@ -103,23 +99,23 @@ int getRequest(FILE* file, Request** requestAddr)
             }
             else
             {
-                printf("LiftR: Destination floor not in valid range\n");
+                DEBUG_PRINT("LiftR: Destination floor not in valid range\n");
             }
             
         }
         else
         {
-            printf("LiftR: Starting floor not in valid range\n");
+            DEBUG_PRINT("LiftR: Starting floor not in valid range\n");
         }
     }
     else if (sSuccesses == EOF)
     {
-        printf("LiftR: Reached end of file!\n"); //Debug
+        DEBUG_PRINT("LiftR: Reached end of file!\n"); //Debug
         fileEnded = 1;
     }
     else
     {
-        printf("LiftR: Failed to read line!\n"); //Debug
+        DEBUG_PRINT("LiftR: Failed to read line!\n"); //Debug
     }
     
     *requestAddr = newRequest;
@@ -168,7 +164,7 @@ void logRequestReceived(char* logFilePath, sem_t* logFileSem, Request* request, 
     }
     else
     {
-        printf("LiftR: Failed to open log file! No logs written.\n"); //DEBUG
+        printf("Error: The lift request handler has failed to open log file! No logs written.\n");
     }
 
     sem_post(logFileSem); //Releasing lock on log file

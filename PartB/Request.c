@@ -1,5 +1,6 @@
 #define _GNU_SOURCE 
 #include "Request.h"
+#include "Main.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -69,20 +70,20 @@ void addRequestToBuffer(Request* request, RequestBuffer* buffer)
     //Indicating item being added (but NOT that item has been added) AND waiting for buffer to no longer be full
     sem_wait(buffer->emptySem); 
 
-    printf("Buffer: ADD WAITING FOR INTIAL LOCK\n"); //DEBUG
+    DEBUG_PRINT("Buffer: ADD WAITING FOR INTIAL LOCK\n"); //DEBUG
     sem_wait(buffer->sem); //Wait for/initiate lock on buffer
-    printf("Buffer: LOCKED FOR REQUEST ADD\n"); //DEBUG
+    DEBUG_PRINT("Buffer: LOCKED FOR REQUEST ADD\n"); //DEBUG
 
     //Adding request to next open slot in buffer array & increasing used count
     (buffer->reqQueue[buffer->used]).start = request->start;
     (buffer->reqQueue[buffer->used]).dest = request->dest;
     (buffer->used)++;
 
-    printf("Buffer: Request %d-%d added\n", request->start, request->dest); //DEBUG
+    DEBUG_PRINT("Buffer: Request %d-%d added\n", request->start, request->dest); //DEBUG
     
     //Releasing lock on buffer
     sem_post(buffer->sem);
-    printf("Buffer: UNLOCKED AFTER REQUEST ADD\n"); //DEBUG
+    DEBUG_PRINT("Buffer: UNLOCKED AFTER REQUEST ADD\n"); //DEBUG
 
     //Signal that a request has been added to the buffer (i.e. buffer can no longer be empty)
     sem_post(buffer->fullSem);
@@ -100,25 +101,23 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
     int waitStatus = 0;
     struct timespec* specTime = (struct timespec*)malloc(sizeof(struct timespec));
 
-    //printf("Buffer: RETRIEVAL TIMEOUT TIME - %d seconds, %d nanoseconds\n", BUFFER_TIMEOUT_S, BUFFER_TIMEOUT_NS); //DEBUG
     //Setting up timespec
     specTime->tv_sec = time(NULL) + BUFFER_TIMEOUT_S; //Adds seconds waiting time
     specTime->tv_nsec = BUFFER_TIMEOUT_NS; //Adds nanoseconds waiting time
 
     //Indicating request to be removed from buffer AND waiting in case item is added to buffer
-    printf("Buffer: RETRIEVAL CHECKING/WAITING FOR NON-EMPTY BUFFER\n");
-    printf("\t Waiting for: %lld\n", (long long) specTime->tv_sec); //DEBUG
+    DEBUG_PRINT("Buffer: RETRIEVAL CHECKING/WAITING FOR NON-EMPTY BUFFER\n");
     waitStatus = sem_timedwait(buffer->fullSem, specTime);
 
     if (waitStatus != 0) //If wait did not allow for semaphore retrieval
     {
         if (errno == ETIMEDOUT) //If timeout error occurred (sem_timedwait then sets 'errno' variable)
         {
-            printf("Buffer: RETRIEVAL WAIT TIMED OUT (Error code %d)\n", errno); //DEBUG
+            DEBUG_PRINT("Buffer: RETRIEVAL WAIT TIMED OUT (Error code %d)\n", errno); //DEBUG
         }
         else //If other error occured
         {
-            printf("Buffer: Request retrival wait failed with non-standard error - %d\n", errno); //DEBUG
+            DEBUG_PRINT("Buffer: Request retrival wait failed with non-standard error - %d\n", errno); //DEBUG
         }
         
         //Setting request to null to return (indicating timeout/error)
@@ -127,9 +126,9 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
     else //If wait allowed for semaphore retrieval
     {
         //Getting lock on buffer
-        printf("Buffer: RETRIEVAL WAITING ON BUFFER LOCK\n"); //DEBUG
+        DEBUG_PRINT("Buffer: RETRIEVAL WAITING ON BUFFER LOCK\n"); //DEBUG
         sem_wait(buffer->sem);
-        printf("Buffer: LOCKED FOR RETRIEVAL\n"); //DEBUG
+        DEBUG_PRINT("Buffer: LOCKED FOR RETRIEVAL\n"); //DEBUG
 
         //Creating copy of request in front slot of buffer array 
         request = (Request*)malloc(sizeof(Request));
@@ -145,11 +144,11 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
         (buffer->used)--;
 
         sem_post(buffer->sem); //Release lock on buffer
-        printf("Buffer: LOCK RELEASED AFTER RETRIEVAL\n");
+        DEBUG_PRINT("Buffer: LOCK RELEASED AFTER RETRIEVAL\n");
 
         //Signal that a request has been removed from the buffer (i.e. buffer can no longer be full)
         sem_post(buffer->emptySem);
-        printf("Buffer: Request %d-%d retrieved\n", request->start, request->dest); //DEBUG
+        DEBUG_PRINT("Buffer: Request %d-%d retrieved\n", request->start, request->dest); //DEBUG
     }
 
     free(specTime);
@@ -162,29 +161,24 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
  */
 void markDone(RequestBuffer* buffer)
 {
-    printf("Buffer: Waiting for empty to mark as done\n"); //DEBUG
-    printf("Buffer: Initial used - %d\n", buffer->used); //DEBUG
+    DEBUG_PRINT("Buffer: Waiting for empty to mark as done\n"); //DEBUG
+    DEBUG_PRINT("Buffer: Initial used - %d\n", buffer->used); //DEBUG
 
-    printf("Buffer: MARKDONE WAITING ON INTIIAL LOCK\n"); //DEBUG
+    DEBUG_PRINT("Buffer: MARKDONE WAITING ON INTIIAL LOCK\n"); //DEBUG
     sem_wait(buffer->sem);
-    printf("Buffer: LOCKED FOR MARKDONE CHECK\n"); //DEBUG
+    DEBUG_PRINT("Buffer: LOCKED FOR MARKDONE CHECK\n"); //DEBUG
 
     while(buffer->used > 0)
     {
-        // printf("Buffer: Waiting on empty to mark done (current - %d)\n", buffer->used); //DEBUG
-
         //Unlock buffer
         sem_post(buffer->sem);
 
-        //Wait to access lock again to see if requests have been removed
-        // printf("Buffer: STARTING MARKDONE WAIT\n"); //DEBUG
         sem_wait(buffer->sem);
-        // printf("Buffer: MARKDONE WAIT COMPLETE\n"); //DEBUG
     }
 
     //Set done to true as buffer is empty
     buffer->done = 1;
 
     sem_post(buffer->sem); //Unlocking buffer
-    printf("Buffer: UNLOCKED AFTERFOR MARKDONE CHECK\n"); //DEBUG
+    DEBUG_PRINT("Buffer: UNLOCKED AFTERFOR MARKDONE CHECK\n"); //DEBUG
 }

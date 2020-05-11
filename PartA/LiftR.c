@@ -13,8 +13,6 @@
  */
 void *request(void* infoVoid)
 {
-    // printf("Hi, I'm the elevator request handler\n"); //DEBUG
-
     //Getting information passed to this thread
     LiftRequestThreadInfo* info = (LiftRequestThreadInfo*)infoVoid;
 
@@ -39,15 +37,15 @@ void *request(void* infoVoid)
         }
         else //If request was invalid
         {
-            printf("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
+            DEBUG_PRINT("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
         }
     }
 
     //Marking all requests as complete once buffer is empty
     markDone(info->buffer);
 
-    printf("LiftR: All requests read from file!\n"); //DEBUG
-    printf("LiftR: Exiting...\n"); //DEBUG
+    DEBUG_PRINT("LiftR: All requests read from file!\n"); //DEBUG
+    DEBUG_PRINT("LiftR: Exiting...\n"); //DEBUG
 
     pthread_exit(NULL);
 }
@@ -69,14 +67,12 @@ int getRequest(FILE* file, Request** requestAddr)
 
     if (sSuccesses == 2)
     {
-        printf("LiftR: Line scanned successfully\n"); //DEBUG
+        DEBUG_PRINT("LiftR: Line scanned successfully\n"); //DEBUG
         
         if ((startFloor >= 1) && (startFloor <= NUM_FLOORS)) //Validating starting floor range
         {
             if ((destFloor >= 1) && (destFloor <= NUM_FLOORS)) //Validating destination floor range
             {
-                // printf("LiftR: Line is valid!\n"); //DEBUG
-                
                 //Creating request struct & giving it the validated values
                 newRequest = (Request*)malloc(sizeof(Request));
                 newRequest->start = startFloor;
@@ -84,23 +80,23 @@ int getRequest(FILE* file, Request** requestAddr)
             }
             else
             {
-                printf("LiftR: Destination floor not in valid range\n");
+                DEBUG_PRINT("LiftR: Destination floor not in valid range\n");
             }
             
         }
         else
         {
-            printf("LiftR: Starting floor not in valid range\n");
+            DEBUG_PRINT("LiftR: Starting floor not in valid range\n");
         }
     }
     else if (sSuccesses == EOF)
     {
-        printf("LiftR: Reached end of file!\n"); //Debug
+        DEBUG_PRINT("LiftR: Reached end of file!\n"); //Debug
         fileEnded = 1;
     }
     else
     {
-        printf("LiftR: Failed to read line!\n"); //Debug
+        DEBUG_PRINT("LiftR: Failed to read line!\n"); //Debug
     }
     
     *requestAddr = newRequest;

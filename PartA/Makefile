@@ -3,6 +3,12 @@ CFLAGS = -Wall -Werror -pedantic -lpthread -lm -g
 OBJ = Main.o Lift.o LiftR.o Request.o
 EXEC = lift_sim_A
 
+# Condional compilation (for outputting debug print statements)
+ifdef DEBUG
+CFLAGS += -D DEBUG
+DEBUG: clean $(EXEC)
+endif
+
 $(EXEC): $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) $(CFLAGS)
 

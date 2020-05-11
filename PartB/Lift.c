@@ -10,25 +10,23 @@
 
 int lift(LiftProcessInfo* info)
 {
-    // printf("Hi, I'm lift process number %d\n", liftInfo->liftNum); //DEBUG
-
     Request* curRequest; //Current request being worked on
     LiftOperation* curOperation;
 
     //Attempt to read requests while all requests from file have not been completed
-    printf("Lift-%d: Starting retrievals\n", info->liftNum); //DEBUG
+    DEBUG_PRINT("Lift-%d: Starting retrievals\n", info->liftNum); //DEBUG
     while (!(info->buffer->done)) //If timeout occurs, this check will continue to be performed
     {
-        printf("Lift-%d: Trying to get request from buffer\n", info->liftNum); //DEBUG
+        DEBUG_PRINT("Lift-%d: Trying to get request from buffer\n", info->liftNum); //DEBUG
         curRequest = getRequestFromBuffer(info->buffer);
 
         if (curRequest != NULL) //If getting request did not time out
         {
-            printf("Lift-%d: Performing Request %d to %d...\n", info->liftNum, curRequest->start, curRequest->dest); //DEBUG
+            DEBUG_PRINT("Lift-%d: Performing Request %d to %d...\n", info->liftNum, curRequest->start, curRequest->dest); //DEBUG
             curOperation = performOperation(curRequest, info->curPosition, info->requestTime);
             info->totalMovement += curOperation->movement;
 
-            printf("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
+            DEBUG_PRINT("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
 
             logLiftOperation(info->logFilePath, info->logFileSem, info->liftNum, 
                                 info->operationNo, curOperation, info->totalMovement);
@@ -40,11 +38,11 @@ int lift(LiftProcessInfo* info)
         }
         else
         {
-            printf("Lift-%d: Request retrieval timed out\n", info->liftNum); //DEBUG
+            DEBUG_PRINT("Lift-%d: Request retrieval timed out\n", info->liftNum); //DEBUG
         }
     }
     
-    printf("Lift-%d: operation complete! Terminating...\n", info->liftNum);
+    DEBUG_PRINT("Lift-%d: operation complete! Terminating...\n", info->liftNum);
 
     //Adding total movement of this lift to the overall total movement shared with main process
     *(info->sharedTotalMovement) += info->totalMovement;
@@ -134,10 +132,8 @@ LiftOperation* performOperation(Request* request, int* curPosition, int requestT
         *curPosition = operation->move1->endFloor;
     }
         
-    printf("Lift: Starting sleep for %d seconds\n", requestTime);
     //Wait specified amount of time for lift to complete request
     sleep(requestTime);
-    printf("Lift: Sleep finished!\n");
     
     operation->finalPos = *curPosition;
     
@@ -162,7 +158,6 @@ LiftMovement* liftMove(int start, int end)
 
 void logLiftOperation(char* logFilePath, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement)
 {
-    printf("Lift: Making log...\n");
     sem_wait(logFileSem); //Locking log file
 
     FILE* logFile = fopen(logFilePath, "a");
@@ -188,7 +183,7 @@ void logLiftOperation(char* logFilePath, sem_t* logFileSem, int liftNum, int ope
     }
     else
     {
-        printf("Lift: Failed to open log file! No logs written.\n");
+        printf("Error: A lift has failed to open log file! No logs written.\n");
     }
 
     sem_post(logFileSem); //Release lock on log file
