@@ -1,15 +1,21 @@
 Lift Sim By Moritz Bergemann
-Last Updated: 23/04/2020
+Last Updated: 11/05/2020
 
 General Information:
-- The folders 'PartA' and 'PartB' contain the source code for implementations of the 
-    lift simulator using threads and processes respectively. Both programs function identically
-    at the interface-level.
+- Both lift_sim_A and lift_sim_B implement the lift simulation functionality, with the former using
+    threads and the latter using processes. Both function effectively identically from a user's perspective.
 
-How To Compile/Run:
-- Invoking the 'make' command from the command line from either the 'PartA' or 'PartB' folder
-    will compile the respective program into an executable called 'lift_sim_A' or 'lift_sim_B'
-    depending on the folder.
+Compiling the Prorgam:
+- Both programs can be compiled from the root directory
+- The following instructions apply when running on a Linux operating system with GCC and make installed, 
+    from the bash terminal while inside the assignment's main directory ("OS/assignment")
+- To compile both lift_sim_A and B, simply enter 'make' into the terminal
+- To compile lift_sim_A or B individually, enter 'make lift_sim_<A or B>'
+- To remove all compiled files, enter 'make clean'
+- To compile both programs in debug mode (which allows debugger use and prints additional runtime
+     information to the terminal), enter 'make DEBUG=1'
+
+Running the Program:
 - Run the program on Linux using './lift_sim_<A or B> <m> <n>' on the executable created during 
     compilation, where:
     - m is the buffer size (the amount of lift requests that can be loaded into memory without
