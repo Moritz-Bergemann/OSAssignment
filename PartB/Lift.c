@@ -25,7 +25,7 @@ int lift(LiftProcessInfo* info)
         if (curRequest != NULL) //If getting request did not time out
         {
             printf("Lift-%d: Performing Request %d to %d...\n", info->liftNum, curRequest->start, curRequest->dest); //DEBUG
-            curOperation = performOperation(curRequest, info->curPosition, info->moveTime);
+            curOperation = performOperation(curRequest, info->curPosition, info->requestTime);
             info->totalMovement += curOperation->movement;
 
             printf("Lift-%d: Request complete!\n", info->liftNum); //DEBUG
@@ -54,7 +54,7 @@ int lift(LiftProcessInfo* info)
 
 /** Creates and initialises LiftProcessInfo struct
  */
-LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int moveTime, char* logFilePath, sem_t* logFileSem, int* sharedTotalMovement)
+LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int requestTime, char* logFilePath, sem_t* logFileSem, int* sharedTotalMovement)
 {
     //Creating request info on heap
     LiftProcessInfo* info;
@@ -63,7 +63,7 @@ LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int m
     //Initialising struct values
     info->buffer = buffer;
     info->liftNum = liftNum;
-    info->moveTime = moveTime;
+    info->requestTime = requestTime;
     info->totalMovement = 0;
     info->operationNo = 1;
     info->logFilePath = logFilePath;
@@ -102,7 +102,7 @@ void freeLiftOperation(LiftOperation* op)
 /** Performs lift operation for imported lift request
  * 
  */
-LiftOperation* performOperation(Request* request, int* curPosition, int moveTime)
+LiftOperation* performOperation(Request* request, int* curPosition, int requestTime)
 {
     //Initialising lift operation
     LiftOperation* operation;
@@ -117,37 +117,39 @@ LiftOperation* performOperation(Request* request, int* curPosition, int moveTime
     if (*curPosition != request->start)
     {
         //Performing 1st lift move (to request start)
-        operation->move1 = liftMove(*curPosition, request->start, moveTime);
+        operation->move1 = liftMove(*curPosition, request->start);
         operation->movement += operation->move1->movement;
         *curPosition = operation->move1->endFloor;
 
         //Performing 2nd lift move (to request destination)
-        operation->move2 = liftMove(*curPosition, request->dest, moveTime);
+        operation->move2 = liftMove(*curPosition, request->dest);
         operation->movement += operation->move2->movement;
         *curPosition = operation->move2->endFloor;
     }
     else //Performing movement if already at request start
     {
         //Performing only lift move (to request destination)
-        operation->move1 = liftMove(*curPosition, request->dest, moveTime);
+        operation->move1 = liftMove(*curPosition, request->dest);
         operation->movement += operation->move1->movement;
         *curPosition = operation->move1->endFloor;
     }
+        
+    printf("Lift: Starting sleep for %d seconds\n", requestTime);
+    //Wait specified amount of time for lift to complete request
+    sleep(requestTime);
+    printf("Lift: Sleep finished!\n");
     
     operation->finalPos = *curPosition;
     
     return operation;
 } 
 
-LiftMovement* liftMove(int start, int end, int moveTime)
+LiftMovement* liftMove(int start, int end)
 {
     LiftMovement* move = (LiftMovement*)malloc(sizeof(LiftMovement));
     
     //Set starting floor
     move->startFloor = start;
-    
-    //Wait specified amount of time for lift to move
-    sleep(moveTime);
 
     //Set ending floor
     move->endFloor = end;

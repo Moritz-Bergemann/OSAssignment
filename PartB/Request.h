@@ -5,8 +5,8 @@
 #include <semaphore.h>
 
 //Preprocessor Constants//
-#define BUFFER_TIMEOUT_S 1 //Number of seconds request retrieval waits before timing out
-#define BUFFER_TIMEOUT_NS 0 //((int)(5 * powl(10, 8))) //Number of nanoseconds request retrieval waits before timing out
+#define BUFFER_TIMEOUT_S 0 //Number of seconds request retrieval waits before timing out
+#define BUFFER_TIMEOUT_NS  ((int)(5 * powl(10, 8))) //Number of nanoseconds request retrieval waits before timing out (10^8 nanoseconds = 0.1 seconds)
 
 //Structs//
 //Lift request

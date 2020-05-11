@@ -9,7 +9,7 @@
 //Information for the lift process
 typedef struct {
     int liftNum; //Identifying number of this lift (probably 1-3)
-    int moveTime; //Time taken to move from one floor to another
+    int requestTime; //Time taken to complete a request
     int totalMovement; //Total movement (number of floors) done by this lift
     int* curPosition; //Current position of the lift (pointer so can be externally modified)
     RequestBuffer* buffer; //Lift request buffer
@@ -44,7 +44,7 @@ LiftProcessInfo* createLiftProcessInfo(RequestBuffer* buffer, int liftNum, int m
 void freeLiftProcessInfo(LiftProcessInfo* info);
 void freeLiftOperation(LiftOperation* op);
 LiftOperation* performOperation(Request* request, int* curPosition, int moveTime);
-LiftMovement* liftMove(int start, int end, int moveTime);
+LiftMovement* liftMove(int start, int end);
 void logLiftOperation(char* logFilePath, sem_t* logFileSem, int liftNum, int operationNo, LiftOperation* op, int totalMovement);
 
 #endif

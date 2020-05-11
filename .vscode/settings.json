@@ -1,3 +1,6 @@
 {
-    "python.pythonPath": "/usr/bin/python3.6"
+    "python.pythonPath": "/usr/bin/python3.6",
+    "files.associations": {
+        "pthread.h": "c"
+    }
 }

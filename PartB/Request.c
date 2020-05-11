@@ -107,7 +107,7 @@ Request* getRequestFromBuffer(RequestBuffer* buffer)
 
     //Indicating request to be removed from buffer AND waiting in case item is added to buffer
     printf("Buffer: RETRIEVAL CHECKING/WAITING FOR NON-EMPTY BUFFER\n");
-    // printf("\t Waiting for: %lld\n", (long long) specTime->tv_sec); //DEBUG
+    printf("\t Waiting for: %lld\n", (long long) specTime->tv_sec); //DEBUG
     waitStatus = sem_timedwait(buffer->fullSem, specTime);
 
     if (waitStatus != 0) //If wait did not allow for semaphore retrieval
