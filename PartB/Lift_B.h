@@ -1,7 +1,7 @@
 #ifndef LIFT_H
 #define LIFT_H
 
-#include "Request.h" //Needed as used in this file's structs/methods
+#include "Request_B.h" //Needed as used in this file's structs/methods
 #include <stdio.h>
 #include <semaphore.h>
 

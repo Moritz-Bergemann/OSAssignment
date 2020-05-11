@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "Lift.h"
+#include "Lift_B.h"
 #include <stdio.h>
 
 //Preprocessor constants//

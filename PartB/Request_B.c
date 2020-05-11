@@ -1,6 +1,6 @@
 #define _GNU_SOURCE 
-#include "Request.h"
-#include "Main.h"
+#include "Request_B.h"
+#include "Main_B.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>

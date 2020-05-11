@@ -1,9 +1,9 @@
 /**LiftR by Moritz Bergemann
  * File containing functionality for reading lift requests from the imported file writing these to the request buffer.
  */
-#include "LiftR.h"
-#include "Request.h"
-#include "Main.h"
+#include "LiftR_A.h"
+#include "Request_A.h"
+#include "Main_A.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>

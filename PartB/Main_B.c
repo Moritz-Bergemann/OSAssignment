@@ -1,7 +1,7 @@
-#include "Main.h"
-#include "Request.h"
-#include "LiftR.h"
-#include "Lift.h"
+#include "Main_B.h"
+#include "Request_B.h"
+#include "LiftR_B.h"
+#include "Lift_B.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

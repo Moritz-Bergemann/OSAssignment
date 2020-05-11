@@ -63,56 +63,6 @@
   Request No: 13
 ---------------------------------------------
 
----------------------------------------------
-  New Lift Request From Floor 3 to Floor 11
-  Request No: 14
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 1 to Floor 6
-  Request No: 15
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 1 to Floor 10
-  Request No: 16
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 12 to Floor 15
-  Request No: 17
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 17 to Floor 10
-  Request No: 18
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 13 to Floor 20
-  Request No: 19
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 10 to Floor 16
-  Request No: 20
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 18 to Floor 8
-  Request No: 21
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 1 to Floor 11
-  Request No: 22
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 8 to Floor 7
-  Request No: 23
----------------------------------------------
-
 Lift-1 Operation
 Previous position: Floor 1
 Request: Floor 18 to Floor 7
@@ -124,6 +74,11 @@ Detail operations:
 	Total #movement: 28
 Current position: floor 7
 
+---------------------------------------------
+  New Lift Request From Floor 3 to Floor 11
+  Request No: 14
+---------------------------------------------
+
 Lift-2 Operation
 Previous position: Floor 1
 Request: Floor 7 to Floor 13
@@ -134,16 +89,6 @@ Detail operations:
 	#request: 1
 	Total #movement: 12
 Current position: floor 13
-
----------------------------------------------
-  New Lift Request From Floor 18 to Floor 15
-  Request No: 24
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 4 to Floor 6
-  Request No: 25
----------------------------------------------
 
 Lift-3 Operation
 Previous position: Floor 1
@@ -157,8 +102,13 @@ Detail operations:
 Current position: floor 3
 
 ---------------------------------------------
-  New Lift Request From Floor 18 to Floor 1
-  Request No: 26
+  New Lift Request From Floor 1 to Floor 6
+  Request No: 15
+---------------------------------------------
+
+---------------------------------------------
+  New Lift Request From Floor 1 to Floor 10
+  Request No: 16
 ---------------------------------------------
 
 Lift-1 Operation
@@ -172,6 +122,11 @@ Detail operations:
 	Total #movement: 35
 Current position: floor 8
 
+---------------------------------------------
+  New Lift Request From Floor 12 to Floor 15
+  Request No: 17
+---------------------------------------------
+
 Lift-2 Operation
 Previous position: Floor 13
 Request: Floor 8 to Floor 10
@@ -184,13 +139,8 @@ Detail operations:
 Current position: floor 10
 
 ---------------------------------------------
-  New Lift Request From Floor 15 to Floor 20
-  Request No: 27
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 19 to Floor 20
-  Request No: 28
+  New Lift Request From Floor 17 to Floor 10
+  Request No: 18
 ---------------------------------------------
 
 Lift-3 Operation
@@ -205,8 +155,8 @@ Detail operations:
 Current position: floor 10
 
 ---------------------------------------------
-  New Lift Request From Floor 6 to Floor 3
-  Request No: 29
+  New Lift Request From Floor 13 to Floor 20
+  Request No: 19
 ---------------------------------------------
 
 Lift-1 Operation
@@ -220,6 +170,11 @@ Detail operations:
 	Total #movement: 44
 Current position: floor 17
 
+---------------------------------------------
+  New Lift Request From Floor 10 to Floor 16
+  Request No: 20
+---------------------------------------------
+
 Lift-2 Operation
 Previous position: Floor 10
 Request: Floor 10 to Floor 3
@@ -231,13 +186,8 @@ Detail operations:
 Current position: floor 3
 
 ---------------------------------------------
-  New Lift Request From Floor 5 to Floor 15
-  Request No: 30
----------------------------------------------
-
----------------------------------------------
-  New Lift Request From Floor 12 to Floor 6
-  Request No: 31
+  New Lift Request From Floor 18 to Floor 8
+  Request No: 21
 ---------------------------------------------
 
 Lift-3 Operation
@@ -252,8 +202,8 @@ Detail operations:
 Current position: floor 3
 
 ---------------------------------------------
-  New Lift Request From Floor 14 to Floor 20
-  Request No: 32
+  New Lift Request From Floor 1 to Floor 11
+  Request No: 22
 ---------------------------------------------
 
 Lift-1 Operation
@@ -268,8 +218,8 @@ Detail operations:
 Current position: floor 5
 
 ---------------------------------------------
-  New Lift Request From Floor 3 to Floor 18
-  Request No: 33
+  New Lift Request From Floor 8 to Floor 7
+  Request No: 23
 ---------------------------------------------
 
 Lift-2 Operation
@@ -284,8 +234,8 @@ Detail operations:
 Current position: floor 16
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 11
-  Request No: 34
+  New Lift Request From Floor 18 to Floor 15
+  Request No: 24
 ---------------------------------------------
 
 Lift-3 Operation
@@ -299,8 +249,8 @@ Detail operations:
 Current position: floor 9
 
 ---------------------------------------------
-  New Lift Request From Floor 5 to Floor 14
-  Request No: 35
+  New Lift Request From Floor 4 to Floor 6
+  Request No: 25
 ---------------------------------------------
 
 Lift-1 Operation
@@ -315,8 +265,8 @@ Detail operations:
 Current position: floor 6
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 12
-  Request No: 36
+  New Lift Request From Floor 18 to Floor 1
+  Request No: 26
 ---------------------------------------------
 
 Lift-2 Operation
@@ -331,8 +281,8 @@ Detail operations:
 Current position: floor 11
 
 ---------------------------------------------
-  New Lift Request From Floor 15 to Floor 12
-  Request No: 37
+  New Lift Request From Floor 15 to Floor 20
+  Request No: 27
 ---------------------------------------------
 
 Lift-3 Operation
@@ -347,8 +297,8 @@ Detail operations:
 Current position: floor 6
 
 ---------------------------------------------
-  New Lift Request From Floor 19 to Floor 6
-  Request No: 38
+  New Lift Request From Floor 19 to Floor 20
+  Request No: 28
 ---------------------------------------------
 
 Lift-1 Operation
@@ -363,8 +313,8 @@ Detail operations:
 Current position: floor 10
 
 ---------------------------------------------
-  New Lift Request From Floor 4 to Floor 18
-  Request No: 39
+  New Lift Request From Floor 6 to Floor 3
+  Request No: 29
 ---------------------------------------------
 
 Lift-2 Operation
@@ -379,8 +329,8 @@ Detail operations:
 Current position: floor 15
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 3
-  Request No: 40
+  New Lift Request From Floor 5 to Floor 15
+  Request No: 30
 ---------------------------------------------
 
 Lift-3 Operation
@@ -395,8 +345,8 @@ Detail operations:
 Current position: floor 10
 
 ---------------------------------------------
-  New Lift Request From Floor 6 to Floor 19
-  Request No: 41
+  New Lift Request From Floor 12 to Floor 6
+  Request No: 31
 ---------------------------------------------
 
 Lift-1 Operation
@@ -411,8 +361,8 @@ Detail operations:
 Current position: floor 20
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 16
-  Request No: 42
+  New Lift Request From Floor 14 to Floor 20
+  Request No: 32
 ---------------------------------------------
 
 Lift-2 Operation
@@ -427,8 +377,8 @@ Detail operations:
 Current position: floor 16
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 20
-  Request No: 43
+  New Lift Request From Floor 3 to Floor 18
+  Request No: 33
 ---------------------------------------------
 
 Lift-3 Operation
@@ -443,8 +393,8 @@ Detail operations:
 Current position: floor 8
 
 ---------------------------------------------
-  New Lift Request From Floor 10 to Floor 6
-  Request No: 44
+  New Lift Request From Floor 13 to Floor 11
+  Request No: 34
 ---------------------------------------------
 
 Lift-1 Operation
@@ -459,8 +409,8 @@ Detail operations:
 Current position: floor 11
 
 ---------------------------------------------
-  New Lift Request From Floor 17 to Floor 9
-  Request No: 45
+  New Lift Request From Floor 5 to Floor 14
+  Request No: 35
 ---------------------------------------------
 
 Lift-2 Operation
@@ -475,8 +425,8 @@ Detail operations:
 Current position: floor 7
 
 ---------------------------------------------
-  New Lift Request From Floor 17 to Floor 7
-  Request No: 46
+  New Lift Request From Floor 13 to Floor 12
+  Request No: 36
 ---------------------------------------------
 
 Lift-3 Operation
@@ -491,8 +441,8 @@ Detail operations:
 Current position: floor 15
 
 ---------------------------------------------
-  New Lift Request From Floor 8 to Floor 1
-  Request No: 47
+  New Lift Request From Floor 15 to Floor 12
+  Request No: 37
 ---------------------------------------------
 
 Lift-1 Operation
@@ -507,8 +457,8 @@ Detail operations:
 Current position: floor 6
 
 ---------------------------------------------
-  New Lift Request From Floor 13 to Floor 8
-  Request No: 48
+  New Lift Request From Floor 19 to Floor 6
+  Request No: 38
 ---------------------------------------------
 
 Lift-2 Operation
@@ -523,8 +473,8 @@ Detail operations:
 Current position: floor 1
 
 ---------------------------------------------
-  New Lift Request From Floor 14 to Floor 18
-  Request No: 49
+  New Lift Request From Floor 4 to Floor 18
+  Request No: 39
 ---------------------------------------------
 
 Lift-3 Operation
@@ -538,8 +488,8 @@ Detail operations:
 Current position: floor 20
 
 ---------------------------------------------
-  New Lift Request From Floor 18 to Floor 11
-  Request No: 50
+  New Lift Request From Floor 13 to Floor 3
+  Request No: 40
 ---------------------------------------------
 
 Lift-1 Operation
@@ -553,6 +503,11 @@ Detail operations:
 	Total #movement: 139
 Current position: floor 20
 
+---------------------------------------------
+  New Lift Request From Floor 6 to Floor 19
+  Request No: 41
+---------------------------------------------
+
 Lift-2 Operation
 Previous position: Floor 1
 Request: Floor 6 to Floor 3
@@ -563,6 +518,11 @@ Detail operations:
 	#request: 10
 	Total #movement: 120
 Current position: floor 3
+
+---------------------------------------------
+  New Lift Request From Floor 13 to Floor 16
+  Request No: 42
+---------------------------------------------
 
 Lift-3 Operation
 Previous position: Floor 20
@@ -575,6 +535,11 @@ Detail operations:
 	Total #movement: 146
 Current position: floor 15
 
+---------------------------------------------
+  New Lift Request From Floor 13 to Floor 20
+  Request No: 43
+---------------------------------------------
+
 Lift-1 Operation
 Previous position: Floor 20
 Request: Floor 12 to Floor 6
@@ -585,6 +550,11 @@ Detail operations:
 	#request: 11
 	Total #movement: 153
 Current position: floor 6
+
+---------------------------------------------
+  New Lift Request From Floor 10 to Floor 6
+  Request No: 44
+---------------------------------------------
 
 Lift-2 Operation
 Previous position: Floor 3
@@ -597,6 +567,11 @@ Detail operations:
 	Total #movement: 137
 Current position: floor 20
 
+---------------------------------------------
+  New Lift Request From Floor 17 to Floor 9
+  Request No: 45
+---------------------------------------------
+
 Lift-3 Operation
 Previous position: Floor 15
 Request: Floor 3 to Floor 18
@@ -607,6 +582,11 @@ Detail operations:
 	#request: 11
 	Total #movement: 173
 Current position: floor 18
+
+---------------------------------------------
+  New Lift Request From Floor 17 to Floor 7
+  Request No: 46
+---------------------------------------------
 
 Lift-1 Operation
 Previous position: Floor 6
@@ -619,6 +599,11 @@ Detail operations:
 	Total #movement: 162
 Current position: floor 11
 
+---------------------------------------------
+  New Lift Request From Floor 8 to Floor 1
+  Request No: 47
+---------------------------------------------
+
 Lift-2 Operation
 Previous position: Floor 20
 Request: Floor 5 to Floor 14
@@ -629,6 +614,11 @@ Detail operations:
 	#request: 12
 	Total #movement: 161
 Current position: floor 14
+
+---------------------------------------------
+  New Lift Request From Floor 13 to Floor 8
+  Request No: 48
+---------------------------------------------
 
 Lift-3 Operation
 Previous position: Floor 18
@@ -641,6 +631,11 @@ Detail operations:
 	Total #movement: 179
 Current position: floor 12
 
+---------------------------------------------
+  New Lift Request From Floor 14 to Floor 18
+  Request No: 49
+---------------------------------------------
+
 Lift-1 Operation
 Previous position: Floor 11
 Request: Floor 15 to Floor 12
@@ -651,6 +646,11 @@ Detail operations:
 	#request: 13
 	Total #movement: 169
 Current position: floor 12
+
+---------------------------------------------
+  New Lift Request From Floor 18 to Floor 11
+  Request No: 50
+---------------------------------------------
 
 Lift-2 Operation
 Previous position: Floor 14

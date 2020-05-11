@@ -1,7 +1,7 @@
-#include "Main.h"
-#include "Request.h"
-#include "LiftR.h"
-#include "Lift.h"
+#include "Main_A.h"
+#include "Request_A.h"
+#include "LiftR_A.h"
+#include "Lift_A.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>

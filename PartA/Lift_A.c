@@ -1,6 +1,6 @@
-#include "Lift.h"
-#include "Main.h"
-#include "Request.h"
+#include "Lift_A.h"
+#include "Main_A.h"
+#include "Request_A.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
