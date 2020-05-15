@@ -18,7 +18,7 @@ typedef struct {
 
 //Function headers//
 int request(LiftRequestProcessInfo* info);
-int getRequest(FILE* file, Request** requestAddr);
+int getRequest(FILE* file, Request** requestAddr, int lineNum);
 LiftRequestProcessInfo* createReqProcessInfo(RequestBuffer* buffer, char* reqFilePath, char* logFilePath, sem_t* logFileSem, int* sharedTotalRequests);
 void logRequestReceived(char* logFilePath, sem_t* logFileSem, Request* request, int requestNo);
 

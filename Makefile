@@ -15,6 +15,7 @@ CFLAGS += -g
 DEBUG: clean $(EXEC_A) $(EXEC_B) #cleans and then performs target
 endif
 
+
 #COMPILE ALL
 all: $(EXEC_A) $(EXEC_B)
 

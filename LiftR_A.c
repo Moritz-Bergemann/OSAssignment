@@ -25,7 +25,7 @@ void *request(void* infoVoid)
         lineNum++;
 
         //Getting request from file (placed into pointer, returns whether EOF reached)
-        fileEnded = getRequest(info->reqFile, &newRequest);
+        fileEnded = getRequest(info->reqFile, &newRequest, lineNum);
         
         if (newRequest != NULL) //If request was successfully read from line in file
         {
@@ -34,10 +34,6 @@ void *request(void* infoVoid)
             info->requestNo++;
 
             logRequestReceived(info->logFile, newRequest, info->requestNo, info->logFileMutex);
-        }
-        else //If request was invalid
-        {
-            DEBUG_PRINT("LiftR: Invalid line in request file - line %d\n", lineNum); //DEBUG
         }
     }
 
@@ -54,7 +50,7 @@ void *request(void* infoVoid)
  *  Lift request pointer is made NULL if invalid or file ended
  *  Returns 1 if file has ended & 0 if not
  */
-int getRequest(FILE* file, Request** requestAddr)
+int getRequest(FILE* file, Request** requestAddr, int lineNum)
 {
     Request* newRequest = NULL;
 
@@ -63,40 +59,47 @@ int getRequest(FILE* file, Request** requestAddr)
 
     int fileEnded = 0;
 
-    sSuccesses = fscanf(file, "%d %d", &startFloor, &destFloor);
+    char buffer[512]; 
 
-    if (sSuccesses == 2)
+    char* ioSuccess = fgets(buffer, 512, file);
+
+    if (ioSuccess != NULL) 
     {
-        DEBUG_PRINT("LiftR: Line scanned successfully\n"); //DEBUG
-        
-        if ((startFloor >= 1) && (startFloor <= NUM_FLOORS)) //Validating starting floor range
+        sSuccesses = sscanf(buffer, "%d %d", &startFloor, &destFloor);
+        if (sSuccesses == 2)
         {
-            if ((destFloor >= 1) && (destFloor <= NUM_FLOORS)) //Validating destination floor range
+            printf("LiftR: Line scanned successfully\n"); //DEBUG
+            
+            if ((startFloor >= 1) && (startFloor <= NUM_FLOORS)) //Validating starting floor range
             {
-                //Creating request struct & giving it the validated values
-                newRequest = (Request*)malloc(sizeof(Request));
-                newRequest->start = startFloor;
-                newRequest->dest = destFloor;
+                if ((destFloor >= 1) && (destFloor <= NUM_FLOORS)) //Validating destination floor range
+                {
+                    //Creating request struct & giving it the validated values
+                    newRequest = (Request*)malloc(sizeof(Request));
+                    newRequest->start = startFloor;
+                    newRequest->dest = destFloor;
+                }
+                else
+                {
+                    printf("LiftR: Destination floor not in valid range (line %d)\n", lineNum);
+                }
+                
             }
             else
             {
-                DEBUG_PRINT("LiftR: Destination floor not in valid range\n");
+                printf("LiftR: Starting floor not in valid range (line %d)\n", lineNum);
             }
-            
         }
         else
         {
-            DEBUG_PRINT("LiftR: Starting floor not in valid range\n");
+            printf("LiftR: Invalid line format (line %d)\n", lineNum); //Debug
+            
         }
-    }
-    else if (sSuccesses == EOF)
-    {
-        DEBUG_PRINT("LiftR: Reached end of file!\n"); //Debug
-        fileEnded = 1;
     }
     else
     {
-        DEBUG_PRINT("LiftR: Failed to read line!\n"); //Debug
+        DEBUG_PRINT("LiftR: Reached end of file!\n"); //Debug
+        fileEnded = 1;
     }
     
     *requestAddr = newRequest;
